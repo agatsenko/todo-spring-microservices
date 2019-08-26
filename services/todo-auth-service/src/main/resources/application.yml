@@ -1,0 +1,10 @@
+logging:
+  level:
+    org.springframework: INFO
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+springfox.documentation.swagger.v2.path: /swagger/v2/api-docs

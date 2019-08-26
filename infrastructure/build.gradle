@@ -1,0 +1,132 @@
+subprojects {
+  apply plugin: "java"
+  apply plugin: "io.spring.dependency-management"
+  apply plugin: "org.springframework.boot"
+  apply plugin: "com.bmuschko.docker-spring-boot-application"
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    annotationProcessor(
+      depends.lombok,
+    )
+    compileOnly(
+      depends.lombok,
+    )
+    implementation(
+      depends.slf4jApi,
+      depends.springBootStarter,
+    )
+
+    testAnnotationProcessor(
+      depends.lombok,
+    )
+    testCompileOnly(
+      depends.lombok,
+      depends.junit4,
+    )
+    testImplementation(
+      depends.slf4jApi,
+      depends.logbackClassic,
+      depends.junitJupiterApi,
+      depends.junitJupiterParams,
+      depends.assertjCore,
+      depends.springBootStarterTest,
+    )
+    testRuntimeOnly(
+      depends.junitJupiterEngine,
+      depends.junitVintageEngine,
+    )
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom(
+          depends.springCloudDependencies,
+      )
+    }
+  }
+
+  sourceSets {
+    main {
+      java {
+        exclude excludeKeepDirPattern
+      }
+      resources {
+        exclude excludeKeepDirPattern
+      }
+    }
+
+    test {
+      java {
+        exclude excludeKeepDirPattern
+      }
+      resources {
+        exclude excludeKeepDirPattern
+      }
+    }
+  }
+
+  test {
+    useJUnitPlatform()
+
+    testLogging {
+      showStandardStreams = true
+      events "SKIPPED", "FAILED"
+    }
+  }
+
+  docker {
+    springBootApplication {
+      baseImage = dockerImageJava
+      maintainer = dockerLabelMaintainer
+    }
+  }
+
+}
+
+project(":infrastructure:todo-config-server") {
+  version = "${ver.projectMajor}.1.0"
+
+  dependencies {
+    implementation(
+        depends.springCloudConfigServe,
+    )
+  }
+
+  springBoot {
+    mainClassName = "io.agatsenko.todo.infrastructure.TodoConfigServerApp"
+  }
+
+  docker {
+    springBootApplication {
+      tag = "${project.rootProject.name}/${project.name}:${project.version}"
+      ports = [9100, 9100]
+    }
+  }
+}
+
+project(":infrastructure:todo-eureka-server") {
+  version = "${ver.projectMajor}.1.0"
+
+  dependencies {
+    implementation(
+        depends.springCloudStarterConfig,
+        depends.springCloudStarterNetflixEurekaServer,
+        depends.jaxbRuntime,
+    )
+  }
+
+  springBoot {
+    mainClassName = "io.agatsenko.todo.infrastructure.TodoEurekaServerApp"
+  }
+
+  docker {
+    springBootApplication {
+      tag = "${project.rootProject.name}/${project.name}:${project.version}"
+      ports = [9101, 9101]
+    }
+  }
+}

@@ -1,0 +1,7 @@
+server:
+  port: 9101
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false

@@ -1,0 +1,119 @@
+buildscript {
+  ext {
+    ver = [
+      projectMajor: "0",
+
+      java: "11",
+      lombok: "1.18.+",
+
+      slf4j: "1.7.+",
+      logback: "1.2.+",
+
+      guava: "28.0-jre",
+      commonsLang3: "3.9",
+
+      springfoxSwagger: "2.9.+",
+
+			springBoot: "2.1.7.RELEASE",
+			springCloud: "Greenwich.SR1",
+
+      junit4: "4.12",
+      // spring-test required 5.3 version
+      junit5: "5.3.+",
+      assertj: "3.+",
+      restAssured: "4.0.+",
+
+			springDependencyManagementPlugin: "1.0.8.RELEASE",
+      gradleDockerComposePlugin: "0.9.+",
+      gradleDockerPlugin: "4.+",
+    ]
+
+    depends = [
+      lombok: "org.projectlombok:lombok:${ver.lombok}",
+
+      slf4jApi: "org.slf4j:slf4j-api:${ver.slf4j}",
+      logbackClassic: "ch.qos.logback:logback-classic:${ver.logback}",
+
+      guava: "com.google.guava:guava:${ver.guava}",
+      commonsLang3: "org.apache.commons:commons-lang3",
+      jaxbRuntime: "org.glassfish.jaxb:jaxb-runtime",
+
+      hibernateValidator: "org.hibernate.validator:hibernate-validator",
+      hibernateValidatorAnnotationProcessor: "org.hibernate.validator:hibernate-validator-annotation-processor",
+
+      springfoxSwagger2: "io.springfox:springfox-swagger2:${ver.springfoxSwagger}",
+      springfoxSwaggerUi: "io.springfox:springfox-swagger-ui:${ver.springfoxSwagger}",
+
+      springBootDependencies: "org.springframework.boot:spring-boot-dependencies:${ver.springBoot}",
+      springCloudDependencies: "org.springframework.cloud:spring-cloud-dependencies:${ver.springCloud}",
+
+      springSecurityCrypto: "org.springframework.security:spring-security-crypto",
+      springBootStarter: "org.springframework.boot:spring-boot-starter",
+      springBootStarterDataMongodb: "org.springframework.boot:spring-boot-starter-data-mongodb",
+      springBootStarterWeb: "org.springframework.boot:spring-boot-starter-web",
+      springBootStarterActuator: "org.springframework.boot:spring-boot-starter-actuator",
+
+      springCloudConfigServe: "org.springframework.cloud:spring-cloud-config-server",
+      springCloudStarterConfig: "org.springframework.cloud:spring-cloud-starter-config",
+      springCloudStarterNetflixEurekaClient: "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client",
+      springCloudStarterNetflixEurekaServer: "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server",
+      springCloudStarterNetflixRibbon: "org.springframework.cloud:spring-cloud-starter-netflix-ribbon",
+
+      junit4: "junit:junit:${ver.junit4}",
+      junitJupiterApi: "org.junit.jupiter:junit-jupiter-api:${ver.junit5}",
+      junitJupiterEngine: "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}",
+      junitVintageEngine: "org.junit.vintage:junit-vintage-engine:${ver.junit5}",
+      junitJupiterParams: "org.junit.jupiter:junit-jupiter-params:${ver.junit5}",
+      assertjCore: "org.assertj:assertj-core:${ver.assertj}",
+      springBootStarterTest: "org.springframework.boot:spring-boot-starter-test:${ver.springBoot}",
+      restAssured: "io.rest-assured:rest-assured:${ver.restAssured}",
+
+      springDependencyManagementPlugin: "io.spring.gradle:dependency-management-plugin:${ver.springDependencyManagementPlugin}",
+			springBootPlugin: "org.springframework.boot:spring-boot-gradle-plugin:${ver.springBoot}",
+      gradleDockerComposePlugin: "com.avast.gradle:gradle-docker-compose-plugin:${ver.gradleDockerComposePlugin}",
+      gradleDockerPlugin: "com.bmuschko:gradle-docker-plugin:${ver.gradleDockerPlugin}",
+    ]
+
+    springBootVersion = ver.springBoot
+    springCloudVersion = ver.springCloud
+
+    excludeKeepDirPattern = "**/.keepdir"
+
+    group = "io.agatsenko"
+    sourceCompatibility = ver.java
+
+    dockerImageJava = "adoptopenjdk:11-jre-hotspot"
+    dockerLabelMaintainer = "Alexander Gatsenko (alexandr.gatsenko@gmail.com)"
+  }
+
+  // override spring bom dependency versions
+  ext["commons-lang3.version"] = ver.commonsLang3
+  ext["rest-assured.version"] = ver.restAssured
+
+  repositories {
+		mavenCentral()
+    maven {
+		  url("https://plugins.gradle.org/m2/")
+    }
+	}
+
+	dependencies {
+		classpath(
+			depends.springDependencyManagementPlugin,
+			depends.springBootPlugin,
+      depends.gradleDockerComposePlugin,
+      depends.gradleDockerPlugin,
+		)
+	}
+}
+
+apply plugin: "docker-compose"
+
+dockerCompose {
+  useComposeFiles = ["docker-compose.dev.yml"]
+
+  infrastructure {
+    useComposeFiles = ["docker-compose.dev.yml"]
+    startedServices = ["mongodb", "todo-config-server", "todo-eureka-server"]
+  }
+}

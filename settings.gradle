@@ -1,0 +1,26 @@
+rootProject.name = "todo-spring-microservices"
+
+include(":libs")
+includeLib("todo-test")
+includeLib("todo-util")
+includeLib("todo-service-common")
+
+include (":services")
+includeServiceModule("todo-auth-service")
+
+include(":infrastructure")
+includeInfrastructureModule("todo-eureka-server")
+includeInfrastructureModule("todo-config-server")
+
+
+def includeLib(String name) {
+  include(":libs:$name")
+}
+
+def includeServiceModule(String name) {
+  include(":services:$name")
+}
+
+def includeInfrastructureModule(String name) {
+  include(":infrastructure:$name")
+}

@@ -1,0 +1,46 @@
+version: "3.3"
+
+services:
+
+  mongodb:
+    build: ./infrastructure/mongodb
+    image: "todo-spring-microservices/mongodb:3-0.1.0"
+    restart: always
+    volumes:
+      - "./infrastructure/mongodb/scripts:/docker-entrypoint-initdb.d"
+    ports:
+      - 9200:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+      MONGO_INITDB_DATABASE: admin
+
+  todo-config-server:
+    image: "todo-spring-microservices/todo-config-server:0.1.0"
+    restart: always
+    ports:
+      - 9100:9100
+
+  todo-eureka-server:
+    image: "todo-spring-microservices/todo-eureka-server:0.1.0"
+    depends_on:
+      - todo-config-server
+    restart: always
+    ports:
+      - 9101:9101
+    environment:
+      'spring.cloud.config.uri': http://todo-config-server:9100
+      'spring.cloud.config.label': docker
+
+  todo-auth-service:
+    image: "todo-spring-microservices/todo-auth-service:0.1.0"
+    depends_on:
+      - mongodb
+      - todo-config-server
+      - todo-eureka-server
+    restart: always
+    ports:
+      - 9000:9000
+    environment:
+      'spring.cloud.config.uri': http://todo-config-server:9100
+      'spring.cloud.config.label': docker

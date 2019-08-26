@@ -1,0 +1,15 @@
+logging:
+  level:
+    org.springframework: INFO
+
+server:
+  port: 9100
+
+spring:
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config/{profile}/{label}

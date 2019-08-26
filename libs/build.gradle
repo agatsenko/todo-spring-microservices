@@ -1,0 +1,120 @@
+subprojects {
+  apply plugin: "java"
+  apply plugin: "io.spring.dependency-management"
+
+  sourceSets {
+    main {
+      java {
+        exclude excludeKeepDirPattern
+      }
+      resources {
+        exclude excludeKeepDirPattern
+      }
+    }
+
+    test {
+      java {
+        exclude excludeKeepDirPattern
+      }
+      resources {
+        exclude excludeKeepDirPattern
+      }
+    }
+  }
+
+  test {
+    useJUnitPlatform()
+  }
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    annotationProcessor(
+      depends.lombok,
+    )
+    compileOnly(
+      depends.lombok,
+    )
+    implementation(
+      depends.slf4jApi,
+    )
+
+    testAnnotationProcessor(
+      depends.lombok,
+    )
+    testCompileOnly(
+      depends.lombok,
+      depends.junit4,
+    )
+    testImplementation(
+      depends.slf4jApi,
+      depends.logbackClassic,
+      depends.junitJupiterApi,
+      depends.junitJupiterParams,
+      depends.assertjCore,
+    )
+    testRuntimeOnly(
+      depends.junitJupiterEngine,
+      depends.junitVintageEngine,
+    )
+  }
+}
+
+project(":libs:todo-test") {
+  version = "${ver.projectMajor}.1.0"
+
+  dependencies {
+    implementation(
+      depends.junitJupiterApi,
+      depends.junitJupiterParams,
+    )
+  }
+}
+
+project(":libs:todo-util") {
+  version = "${ver.projectMajor}.1.0"
+
+  dependencies {
+    implementation(
+      depends.guava,
+    )
+    testImplementation(
+      project(":libs:todo-test"),
+    )
+  }
+}
+
+project(":libs:todo-service-common") {
+  apply plugin: "io.spring.dependency-management"
+
+  version = "${ver.projectMajor}.1.0"
+
+  dependencies {
+    implementation(
+      project(":libs:todo-util"),
+      depends.guava,
+      depends.commonsLang3,
+
+      // FIXME: review to remove
+      depends.hibernateValidator,
+      depends.hibernateValidatorAnnotationProcessor,
+
+      depends.springBootStarterDataMongodb,
+      depends.springBootStarterWeb,
+      depends.springfoxSwagger2,
+    )
+    testImplementation(
+      project(":libs:todo-test"),
+    )
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom(
+          depends.springBootDependencies,
+      )
+    }
+  }
+}

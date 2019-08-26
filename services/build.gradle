@@ -1,0 +1,184 @@
+subprojects {
+  apply plugin: "java"
+  apply plugin: "io.spring.dependency-management"
+  apply plugin: "org.springframework.boot"
+  apply plugin: "com.bmuschko.docker-spring-boot-application"
+
+  sourceSets {
+    main {
+      java {
+        exclude excludeKeepDirPattern
+      }
+      resources {
+        exclude excludeKeepDirPattern
+      }
+    }
+
+    test {
+      java {
+        exclude excludeKeepDirPattern
+      }
+      resources {
+        exclude excludeKeepDirPattern
+      }
+    }
+
+    // functional tests
+    ftest {
+      java {
+        srcDir file("src/ftest/java")
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+        exclude excludeKeepDirPattern
+      }
+      resources {
+        exclude excludeKeepDirPattern
+      }
+    }
+  }
+
+  configurations {
+    ftestImplementation.extendsFrom implementation
+    ftestRuntimeOnly.extendsFrom runtimeOnly
+  }
+
+  task ftest(type: Test) {
+    description = "Run the functional tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets.ftest.output.classesDirs
+    classpath = sourceSets.ftest.runtimeClasspath
+
+    mustRunAfter test
+  }
+  check.dependsOn ftest
+
+  test {
+    useJUnitPlatform()
+
+    testLogging {
+      showStandardStreams = true
+      events "SKIPPED", "FAILED"
+    }
+  }
+
+  ftest {
+    useJUnitPlatform()
+
+    testLogging {
+      showStandardStreams = true
+      events "SKIPPED", "FAILED"
+    }
+  }
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    annotationProcessor(
+      depends.lombok,
+    )
+    compileOnly(
+      depends.lombok,
+    )
+    implementation(
+      project(":libs:todo-util"),
+      project(":libs:todo-service-common"),
+      depends.slf4jApi,
+      depends.guava,
+      depends.commonsLang3,
+      depends.springBootStarter,
+      depends.springBootStarterWeb,
+      depends.springBootStarterActuator,
+      depends.springCloudStarterConfig,
+      depends.springCloudStarterNetflixEurekaClient,
+    )
+
+    testAnnotationProcessor(
+      depends.lombok,
+    )
+    testCompileOnly(
+      depends.lombok,
+      depends.junit4,
+    )
+    testImplementation(
+      project(":libs:todo-test"),
+      depends.slf4jApi,
+      depends.logbackClassic,
+      depends.junitJupiterApi,
+      depends.junitJupiterParams,
+      depends.assertjCore,
+      depends.springBootStarterTest,
+    )
+    testRuntimeOnly(
+      depends.junitJupiterEngine,
+      depends.junitVintageEngine,
+    )
+
+    ftestAnnotationProcessor(
+      depends.lombok,
+    )
+    ftestCompileOnly(
+      depends.lombok,
+      depends.junit4,
+    )
+    ftestImplementation(
+      project(":libs:todo-test"),
+      depends.slf4jApi,
+      depends.logbackClassic,
+      depends.junitJupiterApi,
+      depends.junitJupiterParams,
+      depends.assertjCore,
+      depends.springBootStarterTest,
+    )
+    ftestImplementation(depends.restAssured) {
+      exclude group: "com.sun.xml.bind", module: "jaxb-osgi"
+    }
+    ftestRuntimeOnly(
+      depends.junitJupiterEngine,
+      depends.junitVintageEngine,
+    )
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom(
+        depends.springCloudDependencies,
+      )
+    }
+  }
+
+  docker {
+    springBootApplication {
+      baseImage = dockerImageJava
+      maintainer = dockerLabelMaintainer
+    }
+  }
+}
+
+project(":services:todo-auth-service") {
+  version = "${ver.projectMajor}.1.0"
+
+  dependencies {
+    implementation(
+      depends.hibernateValidator,
+      depends.hibernateValidatorAnnotationProcessor,
+      depends.springSecurityCrypto,
+      depends.springBootStarterDataMongodb,
+      depends.springfoxSwagger2,
+      depends.springfoxSwaggerUi,
+    )
+  }
+
+  springBoot {
+    mainClassName = "io.agatsenko.todo.service.auth.AuthServiceApp"
+  }
+
+  docker {
+    springBootApplication {
+      tag = "${project.rootProject.name}/${project.name}:${project.version}"
+      ports = [9000, 9000]
+    }
+  }
+}
