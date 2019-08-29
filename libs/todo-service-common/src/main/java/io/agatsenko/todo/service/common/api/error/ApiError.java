@@ -2,7 +2,7 @@
  * Author: Alexander Gatsenko (alexandr.gatsenko@gmail.com)
  * Created: 2019-08-24
  */
-package io.agatsenko.todo.service.common.api;
+package io.agatsenko.todo.service.common.api.error;
 
 import java.time.ZonedDateTime;
 
@@ -16,7 +16,7 @@ import lombok.ToString;
 @ApiModel(value = "ApiError", description = "represents the api error response")
 @ToString
 public class ApiError {
-    public final ZonedDateTime time;
+    public final ZonedDateTime timestamp;
     public final int status;
     public final String error;
     public final String message;
@@ -24,11 +24,11 @@ public class ApiError {
     @JsonCreator
     @Builder(builderMethodName = "errorBuilder")
     public ApiError(
-            @JsonProperty("timestamp") ZonedDateTime time,
+            @JsonProperty("timestamp") ZonedDateTime timestamp,
             @JsonProperty("status") int status,
             @JsonProperty("error") String error,
             @JsonProperty("message") String message) {
-        this.time = time;
+        this.timestamp = timestamp;
         this.status = status;
         this.error = error;
         this.message = message;

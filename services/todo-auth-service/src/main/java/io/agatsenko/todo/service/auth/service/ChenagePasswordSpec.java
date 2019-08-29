@@ -4,12 +4,9 @@
  */
 package io.agatsenko.todo.service.auth.service;
 
-import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 
 public interface ChenagePasswordSpec {
-    UUID getUserId();
-
     @NotBlank
     String getOldPassword();
 

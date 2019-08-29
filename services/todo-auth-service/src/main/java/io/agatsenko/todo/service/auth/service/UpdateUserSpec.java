@@ -4,18 +4,10 @@
  */
 package io.agatsenko.todo.service.auth.service;
 
-import java.util.UUID;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
-public interface ChangeUserInfoSpec {
-    @NotNull
-    UUID getUserId();
-
-    @NotBlank
-    String getName();
-
+public interface UpdateUserSpec {
     @NotBlank
     @Email
     String getEmail();

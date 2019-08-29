@@ -7,6 +7,7 @@ package io.agatsenko.todo.service.auth.service;
 import java.util.Optional;
 import java.util.UUID;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,19 +30,19 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
-    public User registerNewUser(NewUserSpec spec) {
+    public User registerNewUser(@Valid NewUserSpec spec) {
         Check.argNotNull(spec, "spec");
         validate(spec);
         return userRepo.insert(createNewUser(spec));
     }
 
-    public Optional<User> changeUserInfo(ChangeUserInfoSpec spec) {
+    public Optional<User> changeUserInfo(UpdateUserSpec spec) {
         Check.argNotNull(spec, "spec");
-        validate(spec);
-        return userRepo.findById(spec.getUserId()).map(user -> changeUser(user, spec));
+        // FIXME: not yet implemented
+        throw new IllegalStateException("not yet implemented");
     }
 
-    public Optional<User> changeUserPassword(ChangeUserInfoSpec spec) {
+    public Optional<User> changeUserPassword(UpdateUserSpec spec) {
         // FIXME: not yet implemented
         throw new IllegalStateException("not yet implemented");
     }
@@ -72,13 +73,6 @@ public class UserService {
                 .name(spec.getName())
                 .email(spec.getEmail())
                 .passwordHash(createPasswordHash(spec.getPassword()))
-                .build();
-    }
-
-    private User changeUser(User user, ChangeUserInfoSpec spec) {
-        return user.toBuilder()
-                .name(spec.getName())
-                .email(spec.getEmail())
                 .build();
     }
 }

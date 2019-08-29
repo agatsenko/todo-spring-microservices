@@ -12,7 +12,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import io.agatsenko.todo.service.auth.service.UserService;
-import io.agatsenko.todo.service.common.api.ApiError;
+import io.agatsenko.todo.service.common.api.error.ApiError;
+import io.agatsenko.todo.service.common.api.error.ApiValidationError;
 import io.agatsenko.todo.util.Check;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -36,7 +37,7 @@ public class UserRegistrationApiController {
             @ApiResponse(
                     code = 400,
                     message = "new user specification is invalid",
-                    response = ApiError.class
+                    response = ApiValidationError.class
             ),
             @ApiResponse(
                     code = 500,
@@ -46,10 +47,9 @@ public class UserRegistrationApiController {
     })
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void registration(
+    public void registerUser(
             @ApiParam(name = "newUserSpec", value = "specification of the new user", required = true)
             @RequestBody NewUserSpecDto dto) {
         userService.registerNewUser(dto);
-//        return ResponseEntity.noContent().build();
     }
 }

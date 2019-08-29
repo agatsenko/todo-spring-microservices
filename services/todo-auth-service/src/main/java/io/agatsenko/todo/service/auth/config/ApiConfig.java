@@ -7,7 +7,7 @@ package io.agatsenko.todo.service.auth.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.agatsenko.todo.service.common.api.DefaultErrorAttributes;
+import io.agatsenko.todo.service.common.api.error.DefaultErrorAttributes;
 
 @Configuration
 public class ApiConfig {
