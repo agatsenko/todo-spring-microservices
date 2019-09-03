@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: todo-gateway-server
+  cloud:
+    config:
+      uri: http://localhost:9100
+      fast-fail: true
+      profile: dev
+      label: local

@@ -1,11 +1,10 @@
 server:
   port: 9000
 
-spring:
-  data:
-    mongodb:
-      host: mongodb
-      port: 27017
-      database: todo_users
-      username: todo_users
-      password: todo_users
+persistence:
+  mongodb:
+    host: mongodb
+    port: 27017
+    database: todo_users
+    username: todo_users
+    password: todo_users

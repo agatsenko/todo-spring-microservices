@@ -32,6 +32,13 @@ createCollection(
       indexes: [
         {
           key: {
+            name: 1
+          },
+          name: 'udx_users_name',
+          unique: true
+        },
+        {
+          key: {
             email: 1
           },
           name: 'udx_users_email',

@@ -36,13 +36,17 @@ public class UserService {
         return userRepo.insert(createNewUser(spec));
     }
 
-    public Optional<User> changeUserInfo(UpdateUserSpec spec) {
+    public Optional<User> getUser(UUID userId) {
+        return userRepo.findById(userId);
+    }
+
+    public Optional<User> updateUser(UUID userId, UpdateUserSpec spec) {
         Check.argNotNull(spec, "spec");
         // FIXME: not yet implemented
         throw new IllegalStateException("not yet implemented");
     }
 
-    public Optional<User> changeUserPassword(UpdateUserSpec spec) {
+    public Optional<User> changeUserPassword(UUID userId, UpdateUserSpec spec) {
         // FIXME: not yet implemented
         throw new IllegalStateException("not yet implemented");
     }

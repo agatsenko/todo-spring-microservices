@@ -36,6 +36,7 @@ buildscript {
 
       guava: "com.google.guava:guava:${ver.guava}",
       commonsLang3: "org.apache.commons:commons-lang3",
+      // this dependency is required for java 9+
       jaxbRuntime: "org.glassfish.jaxb:jaxb-runtime",
 
       hibernateValidator: "org.hibernate.validator:hibernate-validator",
@@ -47,7 +48,6 @@ buildscript {
       springBootDependencies: "org.springframework.boot:spring-boot-dependencies:${ver.springBoot}",
       springCloudDependencies: "org.springframework.cloud:spring-cloud-dependencies:${ver.springCloud}",
 
-      springSecurityCrypto: "org.springframework.security:spring-security-crypto",
       springBootStarter: "org.springframework.boot:spring-boot-starter",
       springBootStarterDataMongodb: "org.springframework.boot:spring-boot-starter-data-mongodb",
       springBootStarterWeb: "org.springframework.boot:spring-boot-starter-web",
@@ -58,6 +58,13 @@ buildscript {
       springCloudStarterNetflixEurekaClient: "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client",
       springCloudStarterNetflixEurekaServer: "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server",
       springCloudStarterNetflixRibbon: "org.springframework.cloud:spring-cloud-starter-netflix-ribbon",
+      springCloudStarterNetflixZuul: "org.springframework.cloud:spring-cloud-starter-netflix-zuul",
+
+      // FIXME: those dependencies should be reviewed
+      springSecurityCrypto: "org.springframework.security:spring-security-crypto",
+      springBootStarterSecurity: "org.springframework.boot:spring-boot-starter-security",
+      springCloudStarterSecurity: "org.springframework.cloud:spring-cloud-starter-security",
+      springCloudStarterOauth2: "org.springframework.cloud:spring-cloud-starter-oauth2",
 
       junit4: "junit:junit:${ver.junit4}",
       junitJupiterApi: "org.junit.jupiter:junit-jupiter-api:${ver.junit5}",
@@ -112,8 +119,13 @@ apply plugin: "docker-compose"
 dockerCompose {
   useComposeFiles = ["docker-compose.dev.yml"]
 
-  infrastructure {
+  mongodb {
     useComposeFiles = ["docker-compose.dev.yml"]
-    startedServices = ["mongodb", "todo-config-server", "todo-eureka-server"]
+    startedServices = ["mongodb"]
+  }
+
+  infra {
+    useComposeFiles = ["docker-compose.dev.yml"]
+    startedServices = ["mongodb", "todo-config-server", "todo-service-discovery-server"]
   }
 }

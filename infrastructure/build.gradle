@@ -108,7 +108,7 @@ project(":infrastructure:todo-config-server") {
   }
 }
 
-project(":infrastructure:todo-eureka-server") {
+project(":infrastructure:todo-service-discovery-server") {
   version = "${ver.projectMajor}.1.0"
 
   dependencies {
@@ -120,13 +120,36 @@ project(":infrastructure:todo-eureka-server") {
   }
 
   springBoot {
-    mainClassName = "io.agatsenko.todo.infrastructure.TodoEurekaServerApp"
+    mainClassName = "io.agatsenko.todo.infrastructure.servicedescovery.TodoEurekaServerApp"
   }
 
   docker {
     springBootApplication {
       tag = "${project.rootProject.name}/${project.name}:${project.version}"
       ports = [9101, 9101]
+    }
+  }
+}
+
+project(":infrastructure:todo-gateway-server") {
+  version = "${ver.projectMajor}.1.0"
+
+  dependencies {
+    implementation(
+        depends.springCloudStarterConfig,
+        depends.springCloudStarterNetflixEurekaClient,
+        depends.springCloudStarterNetflixZuul,
+    )
+  }
+
+  springBoot {
+    mainClassName = "io.agatsenko.todo.infrastructure.gateway.TodoZuulGatewayServer"
+  }
+
+  docker {
+    springBootApplication {
+      tag = "${project.rootProject.name}/${project.name}:${project.version}"
+      ports = [9102, 9102]
     }
   }
 }

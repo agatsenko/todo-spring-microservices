@@ -21,8 +21,8 @@ services:
     ports:
       - 9100:9100
 
-  todo-eureka-server:
-    image: "todo-spring-microservices/todo-eureka-server:0.1.0"
+  todo-service-discovery-server:
+    image: "todo-spring-microservices/todo-service-discovery-server:0.1.0"
     depends_on:
       - todo-config-server
     restart: always
@@ -32,12 +32,25 @@ services:
       'spring.cloud.config.uri': http://todo-config-server:9100
       'spring.cloud.config.label': docker
 
+  todo-gateway-server:
+    image: "todo-spring-microservices/todo-gateway-server:0.1.0"
+    depends_on:
+      - todo-config-server
+      - todo-service-discovery-server
+    restart: always
+    ports:
+      - 9102:9102
+    environment:
+      'spring.cloud.config.uri': http://todo-config-server:9100
+      'spring.cloud.config.label': docker
+
   todo-auth-service:
     image: "todo-spring-microservices/todo-auth-service:0.1.0"
     depends_on:
       - mongodb
       - todo-config-server
-      - todo-eureka-server
+      - todo-service-discovery-server
+      - todo-gateway-server
     restart: always
     ports:
       - 9000:9000

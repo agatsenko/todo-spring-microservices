@@ -11,4 +11,4 @@ management:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://todo-eureka-server:9101/eureka/
+      defaultZone: http://todo-service-discovery-server:9101/eureka/

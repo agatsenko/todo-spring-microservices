@@ -12,7 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = {
         "io.agatsenko.todo.service.auth",
-        "io.agatsenko.todo.service.common.api",
+        "io.agatsenko.todo.service.common.web.api",
+        "io.agatsenko.todo.service.common.persistence.mongo",
 })
 @EnableEurekaClient
 @EnableDiscoveryClient

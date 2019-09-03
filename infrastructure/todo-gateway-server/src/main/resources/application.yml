@@ -1,0 +1,9 @@
+logging:
+  level:
+    org.springframework: INFO
+
+zuul:
+  routes:
+    auth-service:
+      path: /auth/**
+      serviceId: todo-auth-service

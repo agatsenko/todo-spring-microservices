@@ -9,8 +9,9 @@ include (":services")
 includeServiceModule("todo-auth-service")
 
 include(":infrastructure")
-includeInfrastructureModule("todo-eureka-server")
 includeInfrastructureModule("todo-config-server")
+includeInfrastructureModule("todo-service-discovery-server")
+includeInfrastructureModule("todo-gateway-server")
 
 
 def includeLib(String name) {
