@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
-import lombok.ToString;
 import lombok.Value;
 
 import io.agatsenko.todo.service.auth.model.UserRole;
@@ -19,7 +18,6 @@ import io.agatsenko.todo.service.auth.service.NewUserSpec;
 
 @ApiModel(value = "NewUserSpec", description = "represents the new user specification")
 @Value
-@ToString
 public class NewUserSpecDto implements NewUserSpec {
     @ApiModelProperty(required = true)
     public final String name;

@@ -5,7 +5,6 @@
   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
     <layout class="ch.qos.logback.classic.PatternLayout">
       <Pattern>%white(%d{ISO8601}) %highlight(%-5level) [%cyan(%t)] %yellow(%C{1.}): %msg%n%throwable</Pattern>
-<!--      <Pattern>%white(%d{ISO8601}) %highlight(%-5level) [%cyan(%t)] %yellow(%C{1.}): %msg%n%caller{500}%throwable</Pattern>-->
     </layout>
   </appender>
 

@@ -10,6 +10,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.*;
 
@@ -17,10 +19,14 @@ import lombok.*;
 @Value
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = "id")
-@ToString(of = {"id", "username", "email", "enabled", "roles"})
+@ToString(of = {"id", "version", "username", "email", "enabled", "roles"})
 public class User {
     @NotNull
+    @Id
     private final UUID id;
+
+    @Version
+    private final Long version;
 
     @NotBlank
     private final String username;

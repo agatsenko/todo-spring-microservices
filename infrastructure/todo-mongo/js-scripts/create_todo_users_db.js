@@ -11,6 +11,9 @@ createCollection(
       $jsonSchema: {
         bsonType: 'object',
         properties: {
+          version: {
+            bsonType: 'long'
+          },
           username: {
             bsonType: 'string'
           },
@@ -27,7 +30,7 @@ createCollection(
             bsonType: 'array'
           }
         },
-        required: ['username', 'password', 'email', 'enabled', 'roles']
+        required: ['version', 'username', 'password', 'email', 'enabled', 'roles']
       }
     },
     validationLevel: 'strict',
@@ -59,6 +62,7 @@ createCollection(
 usersDb.users.insertMany([
   {
     _id: uuidToBinary('f7630005-9342-489d-a8ca-aaa25b2ad35d'),
+    version: NumberLong("1"),
     username: 'test_user',
     password: '$2a$10$p6a4k8w38ZQ3j3pEGCFrjubwgPE/14HyfTLDhbb43IAWfGJgMISBq',
     email: 'test_user@mail.net',
@@ -67,6 +71,7 @@ usersDb.users.insertMany([
   },
   {
     _id: uuidToBinary('e0c43a52-72e5-4176-87e2-b28a55748434'),
+    version: NumberLong("1"),
     username: 'test_usersmanager',
     password: '$2a$10$U64a/W7trFqk9.T0v9TkcOtEbtprWZ8mTbXQddIPvtf6xkpqVP.ym',
     email: 'test_usersmanager@mail.net',
@@ -75,6 +80,7 @@ usersDb.users.insertMany([
   },
   {
     _id: uuidToBinary('c69af56b-9d10-4a48-8f0d-b2991e459dcd'),
+    version: NumberLong("1"),
     username: 'test_user_usersmanager',
     password: '$2a$10$Ixhl4i1PkRIuYgwWZgfniOOl.ppM7rwjNQwcyPVYiDk891SV6.w/6',
     email: 'test_user_usersmanager@mail.net',
