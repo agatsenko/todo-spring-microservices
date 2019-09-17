@@ -4,8 +4,11 @@
  */
 package io.agatsenko.todo.service.auth.service;
 
+import java.util.Collection;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
+import io.agatsenko.todo.service.auth.model.UserRole;
 
 public interface NewUserSpec {
     @NotBlank
@@ -20,4 +23,8 @@ public interface NewUserSpec {
 
     @NotBlank
     String getConfirmPassword();
+
+    boolean isEnabled();
+
+    Collection<UserRole> getRoles();
 }

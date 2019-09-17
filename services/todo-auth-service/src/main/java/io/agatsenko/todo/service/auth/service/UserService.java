@@ -74,9 +74,9 @@ public class UserService {
     private User createNewUser(NewUserSpec spec) {
         return User.builder()
                 .id(UUID.randomUUID())
-                .name(spec.getName())
+                .username(spec.getName())
                 .email(spec.getEmail())
-                .passwordHash(createPasswordHash(spec.getPassword()))
+                .password(createPasswordHash(spec.getPassword()))
                 .build();
     }
 }

@@ -1,0 +1,63 @@
+server:
+  port: 9001
+  servlet:
+    contextPath: /uaa
+
+security:
+  oauth2:
+    # 1 hour
+    accessTokenActiveSeconds: 3600
+    # 24 hours
+    refreshTokenActiveSeconds: 86400
+    # command of key store generation:
+    # keytool -genkeypair -alias jwt -keyalg RSA -keysize 1024 -keypass todo-spring-microservices -keystore jwt-keystore.jks -storepass todo-spring-microservices
+    # note:
+    # a password should be same for key store and key pair
+    # details see in https://dzone.com/articles/50-common-java-errors-and-how-to-avoid-them-part-2 BadPaddingException
+    jwt:
+      keyStore: "classpath:jwt-keystore.jks"
+      keyStorePassword: todo-spring-microservices
+      keyPairAlias: jwt
+      keyPairPassword: todo-spring-microservices
+    clients:
+      browser:
+        clientId: browser
+        scope:
+          - ui
+        authorizedGrantTypes:
+          - password
+          - refresh_token
+      swagger:
+        clientId: swagger
+        encodedSecret: $2a$10$GuVIec22r/8Ls0npXBNrZeXMAxxb43kdIoCyjgjPVelALMBnAOXPO
+        decodedSecret: a0C8wSjDXwYEAwsiFiJ3
+        scope:
+          - ui
+          - server
+        authorizedGrantTypes:
+          - password
+          - refresh_token
+  whitelistUrlPatterns:
+    - /*.ico
+    - /webjars/**
+    - /actuator/**
+    - /swagger/v2/api-docs/**
+    - /swagger-resources/**
+    - /swagger-ui.html
+
+persistence:
+  mongodb:
+    host: ${MONGO_HOST:localhost}
+    port: ${MONGO_PORT:27017}
+    database: ${MONGO_AUTH_DB:todo_auth}
+    username: ${MONGO_AUTH_USERNAME:todo_auth}
+    password: ${MONGO_AUTH_PASSWROD:todo_auth}
+
+swagger:
+  security:
+    defaultClientId: swagger
+    tokenEndpointUrl: http://${GATEWAY_HOST:localhost}:${GATEWAY_PORT:8080}/uaa/oauth/token
+    authorizeEndpointUrl: http://${GATEWAY_HOST:localhost}:${GATEWAY_PORT:8080}/uaa/oauth/authorize
+
+
+springfox.documentation.swagger.v2.path: /swagger/v2/api-docs

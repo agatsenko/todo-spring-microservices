@@ -1,9 +1,11 @@
-logging:
-  level:
-    org.springframework: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 server:
-  port: 9100
+  port: ${CONFIG_PORT:8888}
 
 spring:
   profiles:
@@ -12,4 +14,6 @@ spring:
     config:
       server:
         native:
-          search-locations: classpath:/config/{profile}/{label}
+#          search-locations: classpath:/config/{profile}/{label}
+          search-locations: classpath:/configs
+

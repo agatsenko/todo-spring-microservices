@@ -1,10 +1,7 @@
-
 spring:
   application:
     name: todo-auth-service
   cloud:
     config:
-      uri: http://localhost:9100
+      uri: http://${CONFIG_HOST:localhost}:${CONFIG_PORT:8888}
       fast-fail: true
-      profile: dev
-      label: local

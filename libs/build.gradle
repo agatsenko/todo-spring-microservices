@@ -31,34 +31,29 @@ subprojects {
   }
 
   dependencies {
-    annotationProcessor(
-      depends.lombok,
-    )
-    compileOnly(
-      depends.lombok,
-    )
-    implementation(
-      depends.slf4jApi,
-    )
+    annotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    compileOnly "org.projectlombok:lombok:${ver.lombok}"
+    testAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    testCompileOnly "org.projectlombok:lombok:${ver.lombok}"
 
-    testAnnotationProcessor(
-      depends.lombok,
-    )
-    testCompileOnly(
-      depends.lombok,
-      depends.junit4,
-    )
-    testImplementation(
-      depends.slf4jApi,
-      depends.logbackClassic,
-      depends.junitJupiterApi,
-      depends.junitJupiterParams,
-      depends.assertjCore,
-    )
-    testRuntimeOnly(
-      depends.junitJupiterEngine,
-      depends.junitVintageEngine,
-    )
+    implementation "org.slf4j:slf4j-api"
+
+    testCompileOnly "junit:junit:${ver.junit4}"
+
+    testImplementation "org.slf4j:slf4j-api"
+    testImplementation "ch.qos.logback:logback-classic"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
+    testImplementation "org.assertj:assertj-core:${ver.assertj}"
+
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom "org.springframework.boot:spring-boot-dependencies:${ver.springBoot}"
+    }
   }
 }
 
@@ -66,10 +61,8 @@ project(":libs:todo-test") {
   version = "${ver.projectMajor}.1.0"
 
   dependencies {
-    implementation(
-      depends.junitJupiterApi,
-      depends.junitJupiterParams,
-    )
+    implementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
+    implementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
   }
 }
 
@@ -77,12 +70,9 @@ project(":libs:todo-util") {
   version = "${ver.projectMajor}.1.0"
 
   dependencies {
-    implementation(
-      depends.guava,
-    )
-    testImplementation(
-      project(":libs:todo-test"),
-    )
+    implementation "com.google.guava:guava:${ver.guava}"
+
+    testImplementation project(":libs:todo-test")
   }
 }
 
@@ -92,29 +82,13 @@ project(":libs:todo-service-common") {
   version = "${ver.projectMajor}.1.0"
 
   dependencies {
-    implementation(
-      project(":libs:todo-util"),
-      depends.guava,
-      depends.commonsLang3,
+    implementation project(":libs:todo-util")
+    implementation "com.google.guava:guava:${ver.guava}"
+    implementation "org.apache.commons:commons-lang3"
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "io.springfox:springfox-swagger2:${ver.springfoxSwagger}"
 
-      // FIXME: review to remove
-      depends.hibernateValidator,
-      depends.hibernateValidatorAnnotationProcessor,
-
-      depends.springBootStarterDataMongodb,
-      depends.springBootStarterWeb,
-      depends.springfoxSwagger2,
-    )
-    testImplementation(
-      project(":libs:todo-test"),
-    )
-  }
-
-  dependencyManagement {
-    imports {
-      mavenBom(
-          depends.springBootDependencies,
-      )
-    }
+    testImplementation project(":libs:todo-test")
   }
 }

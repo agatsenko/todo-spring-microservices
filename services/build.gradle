@@ -76,76 +76,57 @@ subprojects {
   }
 
   dependencies {
-    annotationProcessor(
-      depends.lombok,
-    )
-    compileOnly(
-      depends.lombok,
-    )
-    implementation(
-      project(":libs:todo-util"),
-      project(":libs:todo-service-common"),
-      depends.slf4jApi,
-      depends.guava,
-      depends.commonsLang3,
-      depends.springBootStarter,
-      depends.springBootStarterWeb,
-      depends.springBootStarterActuator,
-      depends.springCloudStarterConfig,
-      depends.springCloudStarterNetflixEurekaClient,
-    )
+    annotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    compileOnly "org.projectlombok:lombok:${ver.lombok}"
+    testAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    testCompileOnly "org.projectlombok:lombok:${ver.lombok}"
+    ftestAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    ftestCompileOnly "org.projectlombok:lombok:${ver.lombok}"
 
-    testAnnotationProcessor(
-      depends.lombok,
-    )
-    testCompileOnly(
-      depends.lombok,
-      depends.junit4,
-    )
-    testImplementation(
-      project(":libs:todo-test"),
-      depends.slf4jApi,
-      depends.logbackClassic,
-      depends.junitJupiterApi,
-      depends.junitJupiterParams,
-      depends.assertjCore,
-      depends.springBootStarterTest,
-    )
-    testRuntimeOnly(
-      depends.junitJupiterEngine,
-      depends.junitVintageEngine,
-    )
+    implementation project(":libs:todo-util")
+    implementation project(":libs:todo-service-common")
+    implementation "org.slf4j:slf4j-api"
+    implementation "com.google.guava:guava:${ver.guava}"
+    implementation "org.apache.commons:commons-lang3"
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
 
-    ftestAnnotationProcessor(
-      depends.lombok,
-    )
-    ftestCompileOnly(
-      depends.lombok,
-      depends.junit4,
-    )
-    ftestImplementation(
-      project(":libs:todo-test"),
-      depends.slf4jApi,
-      depends.logbackClassic,
-      depends.junitJupiterApi,
-      depends.junitJupiterParams,
-      depends.assertjCore,
-      depends.springBootStarterTest,
-    )
-    ftestImplementation(depends.restAssured) {
-      exclude group: "com.sun.xml.bind", module: "jaxb-osgi"
-    }
-    ftestRuntimeOnly(
-      depends.junitJupiterEngine,
-      depends.junitVintageEngine,
-    )
+    testCompileOnly "junit:junit:${ver.junit4}"
+
+    testImplementation project(":libs:todo-test")
+    testImplementation "org.slf4j:slf4j-api"
+    testImplementation "ch.qos.logback:logback-classic"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
+    testImplementation "org.assertj:assertj-core:${ver.assertj}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
+
+    ftestCompileOnly "junit:junit:${ver.junit4}"
+
+    ftestImplementation project(":libs:todo-test")
+    ftestImplementation "org.slf4j:slf4j-api"
+    ftestImplementation "ch.qos.logback:logback-classic"
+    ftestImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
+    ftestImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
+    ftestImplementation "org.assertj:assertj-core:${ver.assertj}"
+    ftestImplementation "org.springframework.boot:spring-boot-starter-test"
+    // it's required for rest assured on java 9+
+    ftestImplementation "org.glassfish.jaxb:jaxb-runtime"
+    ftestImplementation "io.rest-assured:rest-assured:${ver.restAssured}"
+
+    ftestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
+    ftestRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
   }
 
   dependencyManagement {
     imports {
-      mavenBom(
-        depends.springCloudDependencies,
-      )
+      mavenBom "org.springframework.cloud:spring-cloud-dependencies:${ver.springCloud}"
     }
   }
 
@@ -161,14 +142,12 @@ project(":services:todo-auth-service") {
   version = "${ver.projectMajor}.1.0"
 
   dependencies {
-    implementation(
-      depends.hibernateValidator,
-      depends.hibernateValidatorAnnotationProcessor,
-      depends.springSecurityCrypto,
-      depends.springBootStarterDataMongodb,
-      depends.springfoxSwagger2,
-      depends.springfoxSwaggerUi,
-    )
+    implementation "org.hibernate.validator:hibernate-validator"
+    implementation "org.hibernate.validator:hibernate-validator-annotation-processor"
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
+    implementation "io.springfox:springfox-swagger2:${ver.springfoxSwagger}"
+    implementation "io.springfox:springfox-swagger-ui:${ver.springfoxSwagger}"
+    implementation "org.springframework.cloud:spring-cloud-starter-oauth2"
   }
 
   springBoot {
@@ -178,7 +157,6 @@ project(":services:todo-auth-service") {
   docker {
     springBootApplication {
       tag = "${project.rootProject.name}/${project.name}:${project.version}"
-      ports = [9000, 9000]
     }
   }
 }

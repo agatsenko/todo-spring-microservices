@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+zuul:
+  ignoredPatterns:
+    - /**/actuator/**
+    - /**/swagger-ui.html
+    - /**/swagger/v2/api-docs
+    - /**/swagger-resources/**
+    - /**/webjars/springfox-swagger-ui/**
+  sensitiveHeaders: Cookie,Set-Cookie
+  routes:
+    auth-service:
+      serviceId: todo-auth-service
+      path: /uaa/**
+      stripPrefix: false

@@ -1,5 +1,0 @@
-logging:
-  level:
-    io.agatsenko.todo: DEBUG
-
-springfox.documentation.swagger.v2.path: /swagger/v2/api-docs

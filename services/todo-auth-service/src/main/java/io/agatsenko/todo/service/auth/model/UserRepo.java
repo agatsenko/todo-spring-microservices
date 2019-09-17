@@ -4,9 +4,11 @@
  */
 package io.agatsenko.todo.service.auth.model;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface UserRepo extends MongoRepository<User, UUID> {
+    Optional<User> findByUsername(String username);
 }
