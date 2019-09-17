@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import io.agatsenko.todo.service.auth.web.api.UserDtoAssembler;
+import io.agatsenko.todo.service.auth.web.api.UserResponseAssembler;
 import io.agatsenko.todo.service.common.web.api.dto.DtoAssemblers;
 import io.agatsenko.todo.service.common.web.api.error.DefaultErrorAttributes;
 
@@ -25,7 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public DtoAssemblers dtoAssemblers() {
         return new DtoAssemblers(List.of(
-                new UserDtoAssembler()
+                new UserResponseAssembler()
         ));
     }
 

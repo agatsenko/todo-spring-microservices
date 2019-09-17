@@ -16,17 +16,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.*;
 
 @Document("users")
-@Value
-@Builder(toBuilder = true)
+@Getter
+@Setter
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "version", "username", "email", "enabled", "roles"})
+@Builder(toBuilder = true)
 public class User {
     @NotNull
     @Id
     private final UUID id;
 
     @Version
-    private final Long version;
+    private long version;
 
     @NotBlank
     private final String username;

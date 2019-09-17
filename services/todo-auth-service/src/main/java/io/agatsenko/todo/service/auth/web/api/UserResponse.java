@@ -16,12 +16,12 @@ import lombok.Value;
 import io.agatsenko.todo.service.auth.model.UserRole;
 
 @Value
-public class UserDto {
+public class UserResponse {
     @ApiModelProperty(required = true)
     public final UUID id;
 
-    @ApiModelProperty
-    public final Long version;
+    @ApiModelProperty(required = true)
+    public final long version;
 
     @ApiModelProperty(required = true)
     public final String username;
@@ -36,9 +36,9 @@ public class UserDto {
     public final Collection<UserRole> roles;
 
     @Builder
-    public UserDto(
+    public UserResponse(
             @JsonProperty("id") UUID id,
-            @JsonProperty("version") Long version,
+            @JsonProperty("version") long version,
             @JsonProperty("username") String username,
             @JsonProperty("email") String email,
             @JsonProperty("enabled") boolean enabled,

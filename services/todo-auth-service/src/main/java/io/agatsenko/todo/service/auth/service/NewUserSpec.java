@@ -7,12 +7,14 @@ package io.agatsenko.todo.service.auth.service;
 import java.util.Collection;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import io.agatsenko.todo.service.auth.model.UserRole;
 
 public interface NewUserSpec {
     @NotBlank
-    String getName();
+    String getUsername();
 
     @NotBlank
     @Email
@@ -26,5 +28,7 @@ public interface NewUserSpec {
 
     boolean isEnabled();
 
+    @NotNull
+    @NotEmpty
     Collection<UserRole> getRoles();
 }

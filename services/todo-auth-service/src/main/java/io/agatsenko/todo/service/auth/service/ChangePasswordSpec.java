@@ -6,7 +6,7 @@ package io.agatsenko.todo.service.auth.service;
 
 import javax.validation.constraints.NotBlank;
 
-public interface ChenagePasswordSpec {
+public interface ChangePasswordSpec {
     @NotBlank
     String getOldPassword();
 

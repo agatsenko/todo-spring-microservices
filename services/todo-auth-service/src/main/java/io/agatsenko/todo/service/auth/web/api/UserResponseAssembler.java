@@ -9,15 +9,16 @@ import java.util.Collections;
 import io.agatsenko.todo.service.auth.model.User;
 import io.agatsenko.todo.service.common.web.api.dto.BaseDtoAssembler;
 
-public class UserDtoAssembler extends BaseDtoAssembler<User, UserDto> {
-    public UserDtoAssembler() {
-        super(User.class, UserDto.class);
+public class UserResponseAssembler extends BaseDtoAssembler<User, UserResponse> {
+    public UserResponseAssembler() {
+        super(User.class, UserResponse.class);
     }
 
     @Override
-    protected UserDto assemblyNotNull(User user) {
-        return UserDto.builder()
+    protected UserResponse assemblyNotNull(User user) {
+        return UserResponse.builder()
                 .id(user.getId())
+                .version(user.getVersion())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .enabled(user.isEnabled())

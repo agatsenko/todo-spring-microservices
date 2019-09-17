@@ -4,64 +4,75 @@
  */
 package io.agatsenko.todo.service.auth.service;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.RequiredArgsConstructor;
 
 import io.agatsenko.todo.service.auth.model.User;
 import io.agatsenko.todo.service.auth.model.UserRepo;
 import io.agatsenko.todo.util.Check;
 
+@RequiredArgsConstructor
 public class UserService {
     private final Validator validator;
     private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
 
-    public UserService(Validator validator, PasswordEncoder passwordEncoder, UserRepo userRepo) {
-        Check.argNotNull(validator, "validator");
-        Check.argNotNull(passwordEncoder, "passwordEncoder");
-        Check.argNotNull(userRepo, "userRepo");
-        this.validator = validator;
-        this.passwordEncoder = passwordEncoder;
-        this.userRepo = userRepo;
-    }
-
-    public User registerNewUser(@Valid NewUserSpec spec) {
-        Check.argNotNull(spec, "spec");
-        validate(spec);
-        return userRepo.insert(createNewUser(spec));
-    }
-
     public Optional<User> getUser(UUID userId) {
         return userRepo.findById(userId);
     }
 
-    public Optional<User> updateUser(UUID userId, UpdateUserSpec spec) {
-        Check.argNotNull(spec, "spec");
-        // FIXME: not yet implemented
-        throw new IllegalStateException("not yet implemented");
+    public Collection<User> getAllUsers() {
+        return userRepo.findAll();
     }
 
-    public Optional<User> changeUserPassword(UUID userId, UpdateUserSpec spec) {
-        // FIXME: not yet implemented
-        throw new IllegalStateException("not yet implemented");
+    public User createUser(NewUserSpec spec) {
+        validateNewUserSpec(spec);
+        final var user = User.builder()
+                .id(UUID.randomUUID())
+                .username(spec.getUsername())
+                .password(spec.getPassword())
+                .email(spec.getEmail())
+                .enabled(spec.isEnabled())
+                .roles(Set.copyOf(spec.getRoles()))
+                .build();
+        return userRepo.insert(user);
+    }
+
+    public Optional<User> updateUser(UpdateUserSpec spec) {
+        validateUpdateUserSpec(spec);
+        return userRepo.findByIdAndVersion(spec.getId(), spec.getVersion())
+                .map(user -> {
+                    final var updatedUser = user.toBuilder()
+                            .username(spec.getUsername())
+                            .email(spec.getEmail())
+                            .enabled(spec.isEnabled())
+                            .roles(Set.copyOf(spec.getRoles()))
+                            .build();
+                    return userRepo.save(updatedUser);
+                });
+    }
+
+    public Optional<User> changePassword(UUID userId, ChangePasswordSpec spec) {
+        return userRepo.findById(userId)
+                .map(user -> {
+                    validateChangePasswordSpec(user, spec);
+                    final var updatedUser = user.toBuilder()
+                            .password(passwordEncoder.encode(spec.getNewPassword()))
+                            .build();
+                    return userRepo.save(updatedUser);
+                });
     }
 
     public boolean deleteUser(UUID userId) {
-        // FIXME: not yet implemented
-        throw new IllegalStateException("not yet implemented");
-    }
-
-    private String createPasswordHash(String password) {
-        var hash = passwordEncoder.encode(password);
-        while (passwordEncoder.upgradeEncoding(hash)) {
-            hash = passwordEncoder.encode(password);
+        if (!userRepo.existsById(userId)) {
+            return false;
         }
-        return hash;
+        userRepo.deleteById(userId);
+        return true;
     }
 
     private <T> void validate(T value) {
@@ -71,12 +82,43 @@ public class UserService {
         }
     }
 
-    private User createNewUser(NewUserSpec spec) {
-        return User.builder()
-                .id(UUID.randomUUID())
-                .username(spec.getName())
-                .email(spec.getEmail())
-                .password(createPasswordHash(spec.getPassword()))
-                .build();
+    private void validateNewUserSpec(NewUserSpec userSpec) {
+        validate(userSpec);
+        Check.state(
+                Objects.equals(userSpec.getPassword(), userSpec.getConfirmPassword()),
+                "the new password is not equal to the confirm password"
+        );
+        Check.state(
+                !userRepo.existsByUsername(userSpec.getUsername()),
+                "a user with the same username already exists"
+        );
+        Check.state(
+                !userRepo.existsByEmail(userSpec.getEmail()),
+                "a user with the same email already exists"
+        );
+    }
+
+    private void validateUpdateUserSpec(UpdateUserSpec spec) {
+        validate(spec);
+        Check.state(
+                !userRepo.existsByIdNotAndUsername(spec.getId(), spec.getUsername()),
+                "a user with the same username already exists"
+        );
+        Check.state(
+                !userRepo.existsByIdNotAndEmail(spec.getId(), spec.getEmail()),
+                "a user with the same email already exists"
+        );
+    }
+
+    private void validateChangePasswordSpec(User user, ChangePasswordSpec passwordSpec) {
+        validate(passwordSpec);
+        Check.state(
+                passwordEncoder.matches(passwordSpec.getOldPassword(), user.getPassword()),
+                "the old password does not match to the existing password"
+        );
+        Check.state(
+                Objects.equals(passwordSpec.getNewPassword(), passwordSpec.getConfirmNewPassword()),
+                "the new password is not equal to the confirm password"
+        );
     }
 }
