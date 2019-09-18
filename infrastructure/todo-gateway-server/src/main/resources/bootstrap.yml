@@ -3,5 +3,5 @@ spring:
     name: todo-gateway-server
   cloud:
     config:
-      uri: http://${CONFIG_HOST:localhost}:${CONFIG_PORT:8888}
-      fast-fail: true
+      uri: http://${CONFIG_HOST:localhost}:${CONFIG_PORT:8800}
+      fail-fast: true

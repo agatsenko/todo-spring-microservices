@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8000
 
 management:
   endpoints:
@@ -8,6 +8,10 @@ management:
         include: health
 
 zuul:
+  host:
+    connect-timeout-millis: 3000
+    socket-timeout-millis: 3000
+  ignoredServices: "*"
   ignoredPatterns:
     - /**/actuator/**
     - /**/swagger-ui.html
@@ -20,3 +24,15 @@ zuul:
       serviceId: todo-auth-service
       path: /uaa/**
       stripPrefix: false
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+
+ribbon:
+  ReadTimeout: 3000
+  ConnectTimeout: 3000

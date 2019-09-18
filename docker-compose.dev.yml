@@ -23,43 +23,43 @@ services:
     image: "todo-spring-microservices/todo-config-server:0.1.0"
     restart: always
     ports:
-      - 8888:8888
+      - 8800:8800
 
   todo-service-discovery-server:
     image: "todo-spring-microservices/todo-service-discovery-server:0.1.0"
+    restart: always
     depends_on:
       - todo-config-server
-    restart: always
     ports:
-      - 8761:8761
+      - 8801:8801
     environment:
       CONFIG_HOST: todo-config-server
-      CONFIG_PORT: 8888
+      CONFIG_PORT: 8800
 
   todo-gateway-server:
     image: "todo-spring-microservices/todo-gateway-server:0.1.0"
+    restart: always
     depends_on:
       - todo-config-server
       - todo-service-discovery-server
-    restart: always
     ports:
-      - 8080:8080
+      - 8000:8000
     environment:
       CONFIG_HOST: todo-config-server
-      CONFIG_PORT: 8888
+      CONFIG_PORT: 8800
       SERVICE_DISCOVERY_HOST: todo-service-discovery-server
-      SERVICE_DISCOVERY_PORT: 8761
+      SERVICE_DISCOVERY_PORT: 8801
 
   todo-auth-service:
     image: "todo-spring-microservices/todo-auth-service:0.1.0"
+    restart: always
     depends_on:
       - todo-mongo
       - todo-config-server
       - todo-service-discovery-server
       - todo-gateway-server
-    restart: always
     ports:
-      - 9001:9001
+      - 9001:8001
     environment:
       MONGO_HOST: todo-mongo
       MONGO_PORT: 27017
@@ -67,8 +67,8 @@ services:
       MONGO_AUTH_USERNAME: todo_auth
       MONGO_AUTH_PASSWROD: todo_auth
       CONFIG_HOST: todo-config-server
-      CONFIG_PORT: 8888
+      CONFIG_PORT: 8800
       SERVICE_DISCOVERY_HOST: todo-service-discovery-server
-      SERVICE_DISCOVERY_PORT: 8761
+      SERVICE_DISCOVERY_PORT: 8801
       GATEWAY_HOST: todo-gateway-server
-      GATEWAY_PORT: 8080
+      GATEWAY_PORT: 8000
