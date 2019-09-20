@@ -54,8 +54,6 @@ public class SecurityConfig {
         return new DefaultUserDetailsService(userRepo);
     }
 
-    ////////////////////////////////////
-
     @Bean
     public PreAuthenticationUserDetailsService preAuthenticationUserDetailsService(UserRepo userRepo) {
         return new PreAuthenticationUserDetailsService(userRepo);
@@ -68,8 +66,6 @@ public class SecurityConfig {
         provider.setPreAuthenticatedUserDetailsService(userDetailsService);
         return provider;
     }
-
-    ////////////////////////////////////
 
     @Bean
     public JwtSigningKeys jwtSigningKeys(SecurityProperties props) {
@@ -91,17 +87,6 @@ public class SecurityConfig {
         return new DefaultAuthenticationKeyGenerator();
     }
 
-//    @Bean
-//    public JwtAccessTokenConverter jwtAccessTokenConverter(SecurityProperties securityProps) {
-//        final var tokenConverter = new JwtAccessTokenConverter();
-//        tokenConverter.setKeyPair(jwtKeyPair(securityProps));
-//        return tokenConverter;
-//    }
-
-//    @Bean
-//    public TokenStore tokenStore() {
-//        return new InMemoryTokenStore();
-//    }
     @Bean
     public MongoTokenStore mongoTokenStore(
             JwtTokenParser tokenParser,
@@ -110,20 +95,6 @@ public class SecurityConfig {
         return new MongoTokenStore(tokenParser, authKeyGenerator, tokenRepo);
     }
 
-//    @Bean
-//    @Primary
-//    public DefaultTokenServices tokenServices(
-//            SecurityProperties securityProps,
-//            JwtAccessTokenConverter tokenConverter,
-//            TokenStore tokenStore) {
-//        final var services = new DefaultTokenServices();
-//        services.setTokenStore(tokenStore);
-//        services.setSupportRefreshToken(true);
-//        services.setAccessTokenValiditySeconds(securityProps.getOauth2().getAccessTokenActiveSeconds());
-//        services.setRefreshTokenValiditySeconds(securityProps.getOauth2().getRefreshTokenActiveSeconds());
-//        services.setTokenEnhancer(tokenConverter);
-//        return services;
-//    }
     @Bean
     @Primary
     public MongoTokenServices tokenServices(

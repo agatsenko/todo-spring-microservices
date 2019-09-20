@@ -17,7 +17,6 @@ import io.agatsenko.todo.service.common.persistence.mongo.converter.UuidToBinary
 
 @Configuration
 public class MongoConfig extends BaseMongoConfig {
-//    public MongoCustomConversions customConversions(MappingMongoConverter mongoConverter) {
     @Override
     public MongoCustomConversions customConversions() {
         List<Converter<?, ?>> converters = List.of(
@@ -27,13 +26,4 @@ public class MongoConfig extends BaseMongoConfig {
         );
         return new MongoCustomConversions(converters);
     }
-
-//    @Override
-//    public MappingMongoConverter mappingMongoConverter() throws Exception {
-//        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory());
-//		MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
-//		converter.setCustomConversions(customConversions(converter));
-//
-//		return converter;
-//    }
 }
