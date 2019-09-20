@@ -4,10 +4,36 @@
  */
 package io.agatsenko.todo.service.auth.config;
 
-import org.springframework.context.annotation.Configuration;
+import java.util.List;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+
+import io.agatsenko.todo.service.auth.persistence.mongo.OAuth2AuthenticationReadConverter;
+import io.agatsenko.todo.service.auth.persistence.mongo.OAuth2AuthenticationWriteConverter;
 import io.agatsenko.todo.service.common.persistence.mongo.BaseMongoConfig;
+import io.agatsenko.todo.service.common.persistence.mongo.converter.UuidToBinaryConverter;
 
 @Configuration
 public class MongoConfig extends BaseMongoConfig {
+//    public MongoCustomConversions customConversions(MappingMongoConverter mongoConverter) {
+    @Override
+    public MongoCustomConversions customConversions() {
+        List<Converter<?, ?>> converters = List.of(
+                new UuidToBinaryConverter(),
+                new OAuth2AuthenticationReadConverter(),
+                new OAuth2AuthenticationWriteConverter()
+        );
+        return new MongoCustomConversions(converters);
+    }
+
+//    @Override
+//    public MappingMongoConverter mappingMongoConverter() throws Exception {
+//        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory());
+//		MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
+//		converter.setCustomConversions(customConversions(converter));
+//
+//		return converter;
+//    }
 }

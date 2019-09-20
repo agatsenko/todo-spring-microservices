@@ -6,11 +6,11 @@ server:
 security:
   oauth2:
     # 1 hour
-    accessTokenActiveSeconds: 3600
+    accessTokenValiditySeconds: 3600
     # 24 hours
-    refreshTokenActiveSeconds: 86400
+    refreshTokenValiditySeconds: 86400
     # command of key store generation:
-    # keytool -genkeypair -alias jwt -keyalg RSA -keysize 1024 -keypass todo-spring-microservices -keystore jwt-keystore.jks -storepass todo-spring-microservices
+    # keytool -genkeypair -alias jwt -keyalg RSA -keysize 2048 -keypass todo-spring-microservices -keystore jwt-keystore.jks -storepass todo-spring-microservices
     # note:
     # a password should be same for key store and key pair
     # details see in https://dzone.com/articles/50-common-java-errors-and-how-to-avoid-them-part-2 BadPaddingException

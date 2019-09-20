@@ -16,14 +16,11 @@ import io.agatsenko.todo.service.auth.model.UserRepo;
 public class DefaultUserDetailsService implements UserDetailsService {
     @NonNull
     private final UserRepo userRepo;
-    @NonNull
-    private final UserDetailsFactory userDetailsFactory;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepo
                 .findByUsername(username)
-                .map(userDetailsFactory::create)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("'%s' user is not found", username)));
     }
 }

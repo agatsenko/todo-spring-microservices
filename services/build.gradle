@@ -144,6 +144,9 @@ project(":services:todo-auth-service") {
   dependencies {
     implementation "org.hibernate.validator:hibernate-validator"
     implementation "org.hibernate.validator:hibernate-validator-annotation-processor"
+    implementation "io.jsonwebtoken:jjwt-api:${ver.jjwt}"
+    implementation "io.jsonwebtoken:jjwt-impl:${ver.jjwt}"
+    implementation "io.jsonwebtoken:jjwt-jackson:${ver.jjwt}"
     implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
     implementation "io.springfox:springfox-swagger2:${ver.springfoxSwagger}"
     implementation "io.springfox:springfox-swagger-ui:${ver.springfoxSwagger}"

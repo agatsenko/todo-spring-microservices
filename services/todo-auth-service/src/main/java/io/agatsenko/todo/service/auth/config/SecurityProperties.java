@@ -31,8 +31,8 @@ public class SecurityProperties {
 
     @Data
     public static class OauthProperties {
-        private int accessTokenActiveSeconds;
-        private int refreshTokenActiveSeconds;
+        private int accessTokenValiditySeconds;
+        private int refreshTokenValiditySeconds;
         private Map<String, OAuthClientProperties> clients;
         private JwtProperties jwt;
     }

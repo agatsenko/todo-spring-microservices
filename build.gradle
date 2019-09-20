@@ -9,10 +9,11 @@ buildscript {
       guava: "28.0-jre",
       commonsLang3: "3.9",
 
-      springfoxSwagger: "2.9.+",
+      jjwt: "0.10.+",
 
 			springBoot: "2.1.8.RELEASE",
 			springCloud: "Greenwich.SR3",
+      springfoxSwagger: "2.9.+",
 
       junit4: "4.12",
       // spring-test required 5.3 version
@@ -63,11 +64,22 @@ dockerCompose {
 
   mongo {
     useComposeFiles = ["docker-compose.dev.yml"]
+    startedServices = ["todo-mongo", "todo-mongo-express"]
+  }
+
+  onlymongo {
+    useComposeFiles = ["docker-compose.dev.yml"]
     startedServices = ["todo-mongo"]
   }
 
   infra {
     useComposeFiles = ["docker-compose.dev.yml"]
-    startedServices = ["todo-mongo", "todo-config-server", "todo-service-discovery-server", "todo-gateway-server"]
+    startedServices = [
+        "todo-mongo",
+        "todo-mongo-express",
+        "todo-config-server",
+        "todo-service-discovery-server",
+        "todo-gateway-server"
+    ]
   }
 }
