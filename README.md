@@ -47,7 +47,9 @@
 
 Запрос:
 
-`curl -i -X POST --user "browser:" -d "grant_type=password&username=test_user&password=test_user&scope=ui" http://localhost:8000/uaa/oauth/token`
+```
+curl -i -X POST --user "browser:" -d "grant_type=password&username=test_user&password=test_user&scope=ui" http://localhost:8000/uaa/oauth/token
+```
 
 Ответ:
 
@@ -67,8 +69,9 @@
 
 Запрос:
 
-`curl -i -H "Authorization: Bearer $TOKEN" -X GET http://localhost:8000/list/api/task-list
-`
+```
+curl -i -H "Authorization: Bearer $TOKEN" -X GET http://localhost:8000/list/api/task-list
+```
 
 Ответ:
 
@@ -162,7 +165,9 @@
 
 Запрос:
 
-`curl -i -H "Authorization: Bearer $TOKEN" -X GET http://localhost:8000/list/api/task-list/565f38d8-d7b6-4d58-bef1-a655387fca47`
+```
+curl -i -H "Authorization: Bearer $TOKEN" -X GET http://localhost:8000/list/api/task-list/565f38d8-d7b6-4d58-bef1-a655387fca47
+```
 
 Ответ:
 
@@ -198,7 +203,9 @@
 
 Запрос:
 
-`curl -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -H "Accept: application/json" -d '{"name": "list 5","tasks":[{"description": "task 5.1","completed": false,"order": 1}]}' -X POST http://localhost:8000/list/api/task-list`
+```
+curl -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -H "Accept: application/json" -d '{"name": "list 5","tasks":[{"description": "task 5.1","completed": false,"order": 1}]}' -X POST http://localhost:8000/list/api/task-list
+```
 
 Ответ:
 
@@ -301,9 +308,15 @@ curl -i \
 Запрос:
 
 ```
-> LIST_ID=565f38d8-d7b6-4d58-bef1-a655387fca47
-> LIST_VERSION=2
-> curl -i -H "Authorization: Bearer $TOKEN" -X DELETE http://localhost:8000/list/api/task-list/$LIST_ID/$LIST_VERSION
+LIST_ID=565f38d8-d7b6-4d58-bef1-a655387fca47
+```
+
+```
+LIST_VERSION=2
+```
+
+```
+curl -i -H "Authorization: Bearer $TOKEN" -X DELETE http://localhost:8000/list/api/task-list/$LIST_ID/$LIST_VERSION
 ```
 
 Ответ:
