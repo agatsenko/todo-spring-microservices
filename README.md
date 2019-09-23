@@ -31,15 +31,21 @@
  
 Для сборки проекта необходимо выполнить следующую команду:
 
-`gradle clean build dockerBuildImage`
+```
+gradle clean build dockerBuildImage
+```
 
 Для запуска проекта необходимо выполнить следующую команду:
 
-`gradle composeUp`
+```
+gradle composeUp
+```
 
 Для остановки проекта необхоидмо выполнить следующую команду:
 
-`gradle composeDown`
+```
+gradle composeDown
+```
 
 ## Мануальное тестирование
 
