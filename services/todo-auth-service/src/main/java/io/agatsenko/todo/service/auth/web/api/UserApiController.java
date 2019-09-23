@@ -8,17 +8,18 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
+import io.agatsenko.todo.service.auth.client.contract.UserContract;
 import io.agatsenko.todo.service.auth.model.User;
 import io.agatsenko.todo.service.auth.security.oauth.OAuthScope;
 import io.agatsenko.todo.service.auth.service.UserService;
+import io.agatsenko.todo.service.common.log.LogError;
+import io.agatsenko.todo.service.common.log.LogInfo;
 import io.agatsenko.todo.service.common.web.api.dto.DtoAssemblers;
-import io.agatsenko.todo.service.common.web.api.error.ApiError;
+import io.agatsenko.todo.service.common.web.api.error.NotFoundException;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
@@ -26,66 +27,79 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class UserApiController {
+public class UserApiController implements UserContract {
     private final UserService userService;
     private final DtoAssemblers dtoAssemblers;
 
+    @LogInfo
+    @LogError
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> getUser(@PathVariable("id") UUID userId) {
+    public UserResponse getUser(@PathVariable("id") UUID userId) {
         return userService.getUser(userId)
-                .<ResponseEntity<?>>map(user -> ResponseEntity.ok(dtoAssemblers.assembly(UserResponse.class, user)))
-                .orElseGet(() -> ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(ApiError.notFound("user with id=%s is not found", userId))
-                );
+                .map(user -> dtoAssemblers.assembly(UserResponse.class, user))
+                .orElseThrow(() -> new NotFoundException(String.format("user with id=%s is not found", userId)));
     }
 
+    @LogInfo
+    @LogError
+    @GetMapping(value = "/id", produces = APPLICATION_JSON_UTF8_VALUE)
+    @Override
+    public UUID findUserIdByUsername(@RequestParam(name = "username") String username) {
+        return userService.getUser(username)
+                .map(User::getId)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format("user with username=%s is not found", username)
+                ));
+    }
+
+    @LogInfo
+    @LogError
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     public List<UserResponse> getAllUsers() {
         return dtoAssemblers.assembly(User.class, UserResponse.class, userService.getAllUsers());
     }
 
+    @LogInfo
+    @LogError
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     public UserResponse createUser(@RequestBody NewUserRequest request) {
         return dtoAssemblers.assembly(UserResponse.class, userService.createUser(request));
     }
 
+    @LogInfo
+    @LogError
     @PutMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> updateUser(@RequestBody UpdateUserRequest request) {
+    public UserResponse updateUser(@RequestBody UpdateUserRequest request) {
         return userService.updateUser(request)
-                .<ResponseEntity<?>>map(user -> ResponseEntity.ok(dtoAssemblers.assembly(UserResponse.class, user)))
-                .orElseGet(() -> ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(ApiError.notFound(
-                                "user with id=%s and version=%s is not found",
-                                request.getId(),
-                                request.getVersion()
-                        ))
-                );
+                .map(user -> dtoAssemblers.assembly(UserResponse.class, user))
+                .orElseThrow(() -> new NotFoundException(String.format(
+                        "user with id=%s and version=%s is not found",
+                        request.getId(),
+                        request.getVersion()
+                )));
     }
 
+    @LogInfo
+    @LogError
     @PutMapping(
             value = "/{id}/password",
             consumes = APPLICATION_JSON_UTF8_VALUE,
             produces = APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<?> changeUserPassword(
+    public UserResponse changeUserPassword(
             @PathVariable("id") UUID userId,
             @RequestBody ChangePasswordRequest request) {
         return userService.changePassword(userId, request)
-                .<ResponseEntity<?>>map(user -> ResponseEntity.ok(dtoAssemblers.assembly(UserResponse.class, user)))
-                .orElseGet(() -> ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(ApiError.notFound("user with id=%s is not found", userId))
-                );
+                .map(user -> dtoAssemblers.assembly(UserResponse.class, user))
+                .orElseThrow(() -> new NotFoundException(String.format("user with id=%s is not found", userId)));
     }
 
+    @LogInfo
+    @LogError
     @DeleteMapping(value = "{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable("id") UUID userId) {
-        return userService.deleteUser(userId) ?
-                (ResponseEntity<?>) ResponseEntity.noContent().build() :
-                ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(ApiError.notFound("user with id=%s is not found", userId));
+    public void deleteUser(@PathVariable("id") UUID userId) {
+        if (!userService.deleteUser(userId)) {
+            throw new NotFoundException(String.format("user with id=%s is not found", userId));
+        }
     }
 }

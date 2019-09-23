@@ -1,0 +1,22 @@
+logging:
+  level:
+    io.agatsenko.todo: DEBUG
+    org.springframework: INFO
+
+server:
+  port: 8801
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8801}/eureka/
+    registerWithEureka: false
+    fetchRegistry: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

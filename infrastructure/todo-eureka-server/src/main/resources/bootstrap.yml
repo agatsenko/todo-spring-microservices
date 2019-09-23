@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: todo-eureka-server
+  cloud:
+    config:
+      uri: http://${CONFIG_HOST:localhost}:${CONFIG_PORT:8800}
+      fail-fast: true

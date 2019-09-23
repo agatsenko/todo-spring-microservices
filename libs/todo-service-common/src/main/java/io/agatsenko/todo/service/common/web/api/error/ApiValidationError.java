@@ -24,7 +24,7 @@ import io.agatsenko.todo.util.Check;
 @ApiModel(value = "ApiValidationError", description = "represents the validation error response")
 @ToString
 public class ApiValidationError extends ApiError {
-    private static final String DEFAULT_ERROR_MSG = "validation error";
+    public static final String DEFAULT_ERROR_MSG = "validation error";
 
     public final List<Violation> violations;
 

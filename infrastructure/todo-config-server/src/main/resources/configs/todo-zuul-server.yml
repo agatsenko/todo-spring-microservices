@@ -1,0 +1,54 @@
+logging:
+  level:
+    io.agatsenko.todo: DEBUG
+    org.springframework: INFO
+
+server:
+  port: 8000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8801}/eureka/
+    registerWithEureka: true
+    fetchRegistry: true
+
+zuul:
+  host:
+    connect-timeout-millis: 3000
+    socket-timeout-millis: 3000
+  ignoredServices: "*"
+#  ignoredPatterns:
+#    - /**/actuator/**
+#    - /**/swagger-ui.html
+#    - /**/swagger/v2/api-docs
+#    - /**/swagger-resources/**
+#    - /**/webjars/springfox-swagger-ui/**
+  sensitiveHeaders: Cookie,Set-Cookie
+  routes:
+    auth-service:
+      serviceId: todo-auth-service
+      path: /uaa/**
+      stripPrefix: false
+    list-service:
+      serviceId: todo-list-service
+      path: /list/**
+      stripPrefix: false
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+
+ribbon:
+  ReadTimeout: 3000
+  ConnectTimeout: 3000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

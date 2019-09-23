@@ -25,6 +25,10 @@ public class UserService {
         return userRepo.findById(userId);
     }
 
+    public Optional<User> getUser(String username) {
+        return userRepo.findByUsername(username);
+    }
+
     public Collection<User> getAllUsers() {
         return userRepo.findAll();
     }

@@ -92,7 +92,7 @@ project(":infrastructure:todo-config-server") {
   }
 }
 
-project(":infrastructure:todo-service-discovery-server") {
+project(":infrastructure:todo-eureka-server") {
   version = "${ver.projectMajor}.1.0"
 
   dependencies {
@@ -113,7 +113,7 @@ project(":infrastructure:todo-service-discovery-server") {
   }
 }
 
-project(":infrastructure:todo-gateway-server") {
+project(":infrastructure:todo-zuul-server") {
   version = "${ver.projectMajor}.1.0"
 
   dependencies {

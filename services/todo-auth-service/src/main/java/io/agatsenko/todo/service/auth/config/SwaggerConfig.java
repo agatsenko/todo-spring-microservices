@@ -30,7 +30,7 @@ import io.agatsenko.todo.service.auth.security.oauth.OAuthScope;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-    private static final String API_PACKAGE = "io.agatsenko.todo.service.auth.web.api";
+    private static final String API_PACKAGE = "io.agatsenko.todo.service.auth.web";
 
     private static final String API_TITLE = "auth service api";
     private static final String API_DESCRIPTION = "rest api for access to the auth service";

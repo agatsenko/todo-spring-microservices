@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: todo-service-discovery-server
-  cloud:
-    config:
-      uri: http://${CONFIG_HOST:localhost}:${CONFIG_PORT:8800}
-      fail-fast: true

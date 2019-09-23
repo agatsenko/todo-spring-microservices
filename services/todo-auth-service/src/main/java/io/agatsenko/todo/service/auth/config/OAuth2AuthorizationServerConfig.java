@@ -37,7 +37,6 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
                 .passwordEncoder(passwordEncoder)
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()")
-                .allowFormAuthenticationForClients()
         ;
     }
 

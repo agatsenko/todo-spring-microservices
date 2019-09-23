@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import io.agatsenko.todo.service.auth.web.api.UserResponseAssembler;
 import io.agatsenko.todo.service.common.web.api.dto.DtoAssemblers;
+import io.agatsenko.todo.service.common.web.api.error.ApiExceptionHandlers;
 import io.agatsenko.todo.service.common.web.api.error.DefaultErrorAttributes;
 
 @Configuration
@@ -20,6 +21,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public DefaultErrorAttributes defaultErrorAttributes() {
         return new DefaultErrorAttributes();
+    }
+
+    @Bean
+    public ApiExceptionHandlers apiExceptionHandlers() {
+        return new ApiExceptionHandlers();
     }
 
     @Bean

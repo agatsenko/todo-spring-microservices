@@ -20,7 +20,6 @@ public class DefaultErrorAttributes extends org.springframework.boot.web.servlet
     public Map<String, Object> getErrorAttributes(WebRequest webRequest, boolean includeStackTrace) {
         final var attrs = super.getErrorAttributes(webRequest, includeStackTrace);
 
-        attrs.remove(MESSAGE_ATTR);
         attrs.remove(PATH_ATTR);
 
         final var contentType = webRequest.getHeader(HttpHeaders.CONTENT_TYPE);

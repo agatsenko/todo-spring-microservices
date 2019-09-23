@@ -25,14 +25,11 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 import io.agatsenko.todo.service.auth.model.OAuth2TokenRepo;
 import io.agatsenko.todo.service.auth.model.UserRepo;
+import io.agatsenko.todo.service.common.security.jwt.*;
 import io.agatsenko.todo.service.auth.security.oauth.MongoTokenServices;
 import io.agatsenko.todo.service.auth.security.oauth.MongoTokenStore;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.JwtSigningKeyPair;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.JwtSigningKeys;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.JwtTokenParser;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.JwtTokenValueFactory;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.jjwt.JjwtTokenParser;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.jjwt.JjwtTokenValueFactory;
+import io.agatsenko.todo.service.common.security.jwt.jjwt.JjwtTokenParser;
+import io.agatsenko.todo.service.common.security.jwt.jjwt.JjwtTokenValueFactory;
 import io.agatsenko.todo.service.auth.security.userdetails.DefaultUserDetailsService;
 import io.agatsenko.todo.service.auth.security.userdetails.PreAuthenticationUserDetailsService;
 
@@ -78,8 +75,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtTokenParser jwtTokenParser(JwtSigningKeys signingKeys) {
-        return new JjwtTokenParser(signingKeys);
+    public JwtTokenSplitter jwtTokenSplitter() {
+        return JwtTokenSplitter.defaultSplitter;
+    }
+
+    @Bean
+    public JwtTokenParser jwtTokenParser(JwtTokenSplitter splitter, JwtSigningKeys signingKeys) {
+        return new JjwtTokenParser(splitter, signingKeys);
     }
 
     @Bean

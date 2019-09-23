@@ -15,7 +15,7 @@ import lombok.ToString;
 
 import io.agatsenko.todo.util.Check;
 
-public class DtoAssemblers implements DtoAssemblerProvider {
+public class DtoAssemblers {
     private final Map<AssemblerKey, DtoAssembler<?, ?>> assemblers;
 
     public DtoAssemblers(Collection<DtoAssembler<?, ?>> assemblers) {
@@ -23,13 +23,13 @@ public class DtoAssemblers implements DtoAssemblerProvider {
         this.assemblers = Collections.unmodifiableMap(
                 assemblers.stream()
                         .filter(Objects::nonNull)
-                        .peek(a -> {
-                            if (a instanceof DtoAssemblerProviderAware) {
-                                ((DtoAssemblerProviderAware) a).setDtoAssemblerProvider(this);
-                            }
-                        })
                         .collect(Collectors.toMap(a -> new AssemblerKey(a.getModelType(), a.getDtoType()), a -> a))
         );
+        this.assemblers.values().forEach(assembler -> {
+            if (assembler instanceof DtoAssemblersAware) {
+                ((DtoAssemblersAware) assembler).setAssemblers(this);
+            }
+        });
     }
 
     public Collection<DtoAssembler<?, ?>> getAssemblers() {
@@ -37,7 +37,6 @@ public class DtoAssemblers implements DtoAssemblerProvider {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public <TModel, TDto> DtoAssembler<TModel, TDto> ensureGetAssembler(Type modelType, Type dtoType) {
         Check.argNotNull(modelType, "modelType");
         Check.argNotNull(dtoType, "dtoType");

@@ -1,8 +1,6 @@
 subprojects {
   apply plugin: "java"
   apply plugin: "io.spring.dependency-management"
-  apply plugin: "org.springframework.boot"
-  apply plugin: "com.bmuschko.docker-spring-boot-application"
 
   sourceSets {
     main {
@@ -22,7 +20,67 @@ subprojects {
         exclude excludeKeepDirPattern
       }
     }
+  }
 
+  test {
+    useJUnitPlatform()
+
+    testLogging {
+      showStandardStreams = true
+      events "SKIPPED", "FAILED"
+    }
+  }
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    annotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    compileOnly "org.projectlombok:lombok:${ver.lombok}"
+    testAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    testCompileOnly "org.projectlombok:lombok:${ver.lombok}"
+
+    implementation project(":libs:todo-util")
+    implementation project(":libs:todo-service-common")
+    implementation "org.slf4j:slf4j-api"
+    implementation "com.google.guava:guava:${ver.guava}"
+    implementation "org.apache.commons:commons-lang3"
+
+    testCompileOnly "junit:junit:${ver.junit4}"
+
+    testImplementation project(":libs:todo-test")
+    testImplementation "org.slf4j:slf4j-api"
+    testImplementation "ch.qos.logback:logback-classic"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
+    testImplementation "org.assertj:assertj-core:${ver.assertj}"
+
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
+  }
+}
+
+project(":services:todo-auth-service-client") {
+  dependencyManagement {
+    imports {
+      mavenBom "org.springframework.boot:spring-boot-dependencies:${ver.springBoot}"
+      mavenBom "org.springframework.cloud:spring-cloud-dependencies:${ver.springCloud}"
+    }
+  }
+
+  dependencies {
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+  }
+}
+
+project(":services:todo-auth-service") {
+  apply plugin: "org.springframework.boot"
+  apply plugin: "com.bmuschko.docker-spring-boot-application"
+
+  version = "${ver.projectMajor}.1.0"
+
+  sourceSets {
     // functional tests
     ftest {
       java {
@@ -53,15 +111,6 @@ subprojects {
   }
   check.dependsOn ftest
 
-  test {
-    useJUnitPlatform()
-
-    testLogging {
-      showStandardStreams = true
-      events "SKIPPED", "FAILED"
-    }
-  }
-
   ftest {
     useJUnitPlatform()
 
@@ -71,41 +120,34 @@ subprojects {
     }
   }
 
-  repositories {
-    mavenCentral()
+  dependencyManagement {
+    imports {
+      mavenBom "org.springframework.cloud:spring-cloud-dependencies:${ver.springCloud}"
+    }
   }
 
   dependencies {
-    annotationProcessor "org.projectlombok:lombok:${ver.lombok}"
-    compileOnly "org.projectlombok:lombok:${ver.lombok}"
-    testAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
-    testCompileOnly "org.projectlombok:lombok:${ver.lombok}"
-    ftestAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
-    ftestCompileOnly "org.projectlombok:lombok:${ver.lombok}"
+    implementation project(":services:todo-auth-service-client")
 
-    implementation project(":libs:todo-util")
-    implementation project(":libs:todo-service-common")
-    implementation "org.slf4j:slf4j-api"
-    implementation "com.google.guava:guava:${ver.guava}"
-    implementation "org.apache.commons:commons-lang3"
+    implementation "org.hibernate.validator:hibernate-validator"
+    implementation "org.hibernate.validator:hibernate-validator-annotation-processor"
+    implementation "io.jsonwebtoken:jjwt-api:${ver.jjwt}"
+    implementation "io.jsonwebtoken:jjwt-impl:${ver.jjwt}"
+    implementation "io.jsonwebtoken:jjwt-jackson:${ver.jjwt}"
     implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+    implementation "io.springfox:springfox-swagger2:${ver.springfoxSwagger}"
+    implementation "io.springfox:springfox-swagger-ui:${ver.springfoxSwagger}"
+    implementation "org.springframework.cloud:spring-cloud-starter-oauth2"
 
-    testCompileOnly "junit:junit:${ver.junit4}"
-
-    testImplementation project(":libs:todo-test")
-    testImplementation "org.slf4j:slf4j-api"
-    testImplementation "ch.qos.logback:logback-classic"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
-    testImplementation "org.assertj:assertj-core:${ver.assertj}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
+    ftestAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    ftestCompileOnly "org.projectlombok:lombok:${ver.lombok}"
 
     ftestCompileOnly "junit:junit:${ver.junit4}"
 
@@ -124,41 +166,117 @@ subprojects {
     ftestRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
   }
 
-  dependencyManagement {
-    imports {
-      mavenBom "org.springframework.cloud:spring-cloud-dependencies:${ver.springCloud}"
-    }
-  }
-
-  docker {
-    springBootApplication {
-      baseImage = dockerImageJava
-      maintainer = dockerLabelMaintainer
-    }
-  }
-}
-
-project(":services:todo-auth-service") {
-  version = "${ver.projectMajor}.1.0"
-
-  dependencies {
-    implementation "org.hibernate.validator:hibernate-validator"
-    implementation "org.hibernate.validator:hibernate-validator-annotation-processor"
-    implementation "io.jsonwebtoken:jjwt-api:${ver.jjwt}"
-    implementation "io.jsonwebtoken:jjwt-impl:${ver.jjwt}"
-    implementation "io.jsonwebtoken:jjwt-jackson:${ver.jjwt}"
-    implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
-    implementation "io.springfox:springfox-swagger2:${ver.springfoxSwagger}"
-    implementation "io.springfox:springfox-swagger-ui:${ver.springfoxSwagger}"
-    implementation "org.springframework.cloud:spring-cloud-starter-oauth2"
-  }
-
   springBoot {
     mainClassName = "io.agatsenko.todo.service.auth.AuthServiceApp"
   }
 
   docker {
     springBootApplication {
+      baseImage = dockerImageJava
+      maintainer = dockerLabelMaintainer
+      tag = "${project.rootProject.name}/${project.name}:${project.version}"
+    }
+  }
+}
+
+project(":services:todo-list-service") {
+  apply plugin: "org.springframework.boot"
+  apply plugin: "com.bmuschko.docker-spring-boot-application"
+
+  version = "${ver.projectMajor}.1.0"
+
+  sourceSets {
+    // functional tests
+    ftest {
+      java {
+        srcDir file("src/ftest/java")
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+        exclude excludeKeepDirPattern
+      }
+      resources {
+        exclude excludeKeepDirPattern
+      }
+    }
+  }
+
+  configurations {
+    ftestImplementation.extendsFrom implementation
+    ftestRuntimeOnly.extendsFrom runtimeOnly
+  }
+
+  task ftest(type: Test) {
+    description = "Run the functional tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets.ftest.output.classesDirs
+    classpath = sourceSets.ftest.runtimeClasspath
+
+    mustRunAfter test
+  }
+  check.dependsOn ftest
+
+  ftest {
+    useJUnitPlatform()
+
+    testLogging {
+      showStandardStreams = true
+      events "SKIPPED", "FAILED"
+    }
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom "org.springframework.cloud:spring-cloud-dependencies:${ver.springCloud}"
+    }
+  }
+
+  dependencies {
+    implementation project(":services:todo-auth-service-client")
+
+    implementation "org.hibernate.validator:hibernate-validator"
+    implementation "org.hibernate.validator:hibernate-validator-annotation-processor"
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+    implementation "io.springfox:springfox-swagger2:${ver.springfoxSwagger}"
+    implementation "io.springfox:springfox-swagger-ui:${ver.springfoxSwagger}"
+    implementation "org.springframework.cloud:spring-cloud-starter-oauth2"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+
+    ftestAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    ftestCompileOnly "org.projectlombok:lombok:${ver.lombok}"
+
+    ftestCompileOnly "junit:junit:${ver.junit4}"
+
+    ftestImplementation project(":libs:todo-test")
+    ftestImplementation "org.slf4j:slf4j-api"
+    ftestImplementation "ch.qos.logback:logback-classic"
+    ftestImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
+    ftestImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
+    ftestImplementation "org.assertj:assertj-core:${ver.assertj}"
+    ftestImplementation "org.springframework.boot:spring-boot-starter-test"
+    // it's required for rest assured on java 9+
+    ftestImplementation "org.glassfish.jaxb:jaxb-runtime"
+    ftestImplementation "io.rest-assured:rest-assured:${ver.restAssured}"
+
+    ftestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
+    ftestRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
+  }
+
+  springBoot {
+    mainClassName = "io.agatsenko.todo.service.List.TodoListServiceApp"
+  }
+
+  docker {
+    springBootApplication {
+      baseImage = dockerImageJava
+      maintainer = dockerLabelMaintainer
       tag = "${project.rootProject.name}/${project.name}:${project.version}"
     }
   }

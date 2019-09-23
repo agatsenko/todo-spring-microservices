@@ -7,6 +7,7 @@ package io.agatsenko.todo.service.auth.security.oauth;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,10 +28,11 @@ import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import lombok.NonNull;
+import lombok.val;
 
 import io.agatsenko.todo.service.auth.model.OAuth2Token;
 import io.agatsenko.todo.service.auth.model.User;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.*;
+import io.agatsenko.todo.service.common.security.jwt.*;
 import io.agatsenko.todo.util.Check;
 
 public class MongoTokenServices
@@ -70,7 +72,7 @@ public class MongoTokenServices
             if (existingAccessToken.isExpired()) {
                 tokenStore.removeAccessToken(existingAccessToken);
                 if (existingAccessToken.getRefreshToken() != null) {
-                    tokenStore.removeRefreshToken(accessToken.getRefreshToken());
+                    tokenStore.removeRefreshToken(existingAccessToken.getRefreshToken());
                 }
             }
             else {
@@ -221,31 +223,44 @@ public class MongoTokenServices
                 .build(tokenValueFactory);
     }
 
-    private OAuth2AccessToken generateAndStoreAccessToken(OAuth2Authentication auth) {
-        final var now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+    private void buildAccessToken(OAuth2Authentication auth, Instant now, OAuth2Token.OAuth2TokenBuilder builder) {
         final var accessTokenId = UUID.randomUUID();
         final var accessTokenExpTime = now.plusSeconds(accessTokenValiditySeconds);
+        builder
+                .accessTokenId(accessTokenId)
+                .accessTokenValue(
+                        buildJwtToken(accessTokenId, JwtTokenType.ACCESS, accessTokenExpTime, auth).getTokenValue()
+                )
+                .accessTokenExpirationTime(accessTokenExpTime);
+    }
+
+    private void buildRefreshToken(OAuth2Authentication auth, Instant now, OAuth2Token.OAuth2TokenBuilder builder) {
+        if (!Objects.equals(auth.getOAuth2Request().getGrantType(), OAuthGrantTypes.PASSWORD)
+            && !Objects.equals(auth.getOAuth2Request().getGrantType(), OAuthGrantTypes.REFRESH_TOKEN)) {
+            return;
+        }
         final var refreshTokenId = UUID.randomUUID();
         final var refreshTokenExpTime = now.plusSeconds(refreshTokenValiditySeconds);
-        final var token = OAuth2Token.builder()
+        builder
+                .refreshTokenId(refreshTokenId)
+                .refreshTokenValue(
+                        buildJwtToken(refreshTokenId, JwtTokenType.REFRESH, refreshTokenExpTime, auth).getTokenValue()
+                )
+                .refreshTokenExpirationTime(refreshTokenExpTime);
+    }
+
+    private OAuth2AccessToken generateAndStoreAccessToken(OAuth2Authentication auth) {
+        final var now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        final var tokenBuilder = OAuth2Token.builder()
                 .authenticationKey(authKeyGenerator.extractKey(auth))
                 .authentication(auth)
                 .clientId(auth.getOAuth2Request().getClientId())
                 .userId(extractUserId(auth))
                 .username(extractUsername(auth))
-                .accessTokenId(accessTokenId)
-                .accessTokenValue(
-                        buildJwtToken(accessTokenId, JwtTokenType.ACCESS, accessTokenExpTime, auth).getTokenValue()
-                )
-                .accessTokenExpirationTime(accessTokenExpTime)
-                .refreshTokenId(refreshTokenId)
-                .refreshTokenValue(
-                        buildJwtToken(refreshTokenId, JwtTokenType.REFRESH, refreshTokenExpTime, auth).getTokenValue()
-                )
-                .refreshTokenExpirationTime(refreshTokenExpTime)
-                .scope(extractScope(auth))
-                .build();
-        final var accessToken = token.toAccessToken().get();
+                .scope(extractScope(auth));
+        buildAccessToken(auth, now, tokenBuilder);
+        buildRefreshToken(auth, now, tokenBuilder);
+        val accessToken = tokenBuilder.build().toAccessToken().get();
         tokenStore.storeAccessToken(accessToken, auth);
         return accessToken;
     }

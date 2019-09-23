@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -17,22 +16,16 @@ import io.agatsenko.todo.service.auth.model.UserRole;
 
 @Value
 public class UserResponse {
-    @ApiModelProperty(required = true)
     public final UUID id;
 
-    @ApiModelProperty(required = true)
     public final long version;
 
-    @ApiModelProperty(required = true)
     public final String username;
 
-    @ApiModelProperty(required = true)
     public final String email;
 
-    @ApiModelProperty(required = true)
     public final boolean enabled;
 
-    @ApiModelProperty(required = true)
     public final Collection<UserRole> roles;
 
     @Builder

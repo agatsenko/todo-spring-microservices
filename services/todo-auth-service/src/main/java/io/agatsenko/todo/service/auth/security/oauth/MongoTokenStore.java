@@ -21,9 +21,9 @@ import lombok.RequiredArgsConstructor;
 import io.agatsenko.todo.service.auth.model.OAuth2AccessTokenAdapter;
 import io.agatsenko.todo.service.auth.model.OAuth2Token;
 import io.agatsenko.todo.service.auth.model.OAuth2TokenRepo;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.JwtPayload;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.JwtTokenParser;
-import io.agatsenko.todo.service.auth.security.oauth.jwt.JwtTokenType;
+import io.agatsenko.todo.service.common.security.jwt.JwtPayload;
+import io.agatsenko.todo.service.common.security.jwt.JwtTokenParser;
+import io.agatsenko.todo.service.common.security.jwt.JwtTokenType;
 
 @RequiredArgsConstructor
 public class MongoTokenStore implements TokenStore {

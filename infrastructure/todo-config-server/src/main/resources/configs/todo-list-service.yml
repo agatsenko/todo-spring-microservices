@@ -1,0 +1,57 @@
+logging:
+  level:
+    io.agatsenko.todo: DEBUG
+    org.springframework: INFO
+
+server:
+  port: 8002
+  servlet:
+    contextPath: /list
+
+persistence:
+  mongodb:
+    host: ${MONGO_HOST:localhost}
+    port: ${MONGO_PORT:27017}
+    database: ${MONGO_LIST_DB:todo_list}
+    username: ${MONGO_LIST_USERNAME:todo_list}
+    password: ${MONGO_LIST_PASSWORD:todo_list}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8801}/eureka/
+    registerWithEureka: true
+    fetchRegistry: true
+
+security:
+  oauth2:
+    resource:
+      userInfoUri: http://${ZUUL_HOST:localhost}:${ZUUL_PORT:8000}/uaa/principal/current
+      tokenInfoUri: http://${ZUUL_HOST:localhost}:${ZUUL_PORT:8000}/uaa/oauth/check_token
+    client:
+      clientId: todo-list-service
+      clientSecret: Ylr8wcHtv0FJisP7ZQqP
+      accessTokenUri: http://${ZUUL_HOST:localhost}:${ZUUL_PORT:8000}/uaa/oauth/token
+      grant-type: client_credentials
+      scope: server
+  whitelistUrlPatterns:
+    - /*.ico
+    - /webjars/**
+    - /actuator/**
+    - /swagger/v2/api-docs/**
+    - /swagger-resources/**
+    - /swagger-ui.html
+
+#swagger:
+#  security:
+#    defaultClientId: swagger
+#    tokenEndpointUrl: http://${ZUUL_HOST:localhost}:${ZUUL_PORT:8000}/uaa/oauth/token
+#    authorizeEndpointUrl: http://${ZUUL_HOST:localhost}:${ZUUL_PORT:8000}/uaa/oauth/authorize
+
+springfox.documentation.swagger.v2.path: /swagger/v2/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

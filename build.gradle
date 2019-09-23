@@ -78,8 +78,8 @@ dockerCompose {
         "todo-mongo",
         "todo-mongo-express",
         "todo-config-server",
-        "todo-service-discovery-server",
-        "todo-gateway-server"
+        "todo-eureka-server",
+        "todo-zuul-server"
     ]
   }
 }

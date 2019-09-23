@@ -15,11 +15,11 @@ import io.agatsenko.todo.util.Check;
 
 @EqualsAndHashCode(of = {"modelType", "dtoType"})
 @ToString(of = {"modelType", "dtoType"})
-public abstract class BaseDtoAssembler<TModel, TDto> implements DtoAssembler<TModel, TDto>, DtoAssemblerProviderAware {
+public abstract class BaseDtoAssembler<TModel, TDto> implements DtoAssembler<TModel, TDto>, DtoAssemblersAware {
     private final Type modelType;
     private final Type dtoType;
 
-    private DtoAssemblerProvider dtoAssemblerProvider;
+    private DtoAssemblers assemblers;
 
     private BaseDtoAssembler(Type modelType, Type dtoType) {
         Check.argNotNull(modelType, "modelType");
@@ -46,6 +46,15 @@ public abstract class BaseDtoAssembler<TModel, TDto> implements DtoAssembler<TMo
 
     protected abstract TDto assemblyNotNull(TModel model);
 
+    protected DtoAssemblers getAssemblers() {
+        return assemblers;
+    }
+
+    @Override
+    public void setAssemblers(DtoAssemblers assemblers) {
+        this.assemblers = assemblers;
+    }
+
     @Override
     public final Type getModelType() {
         return modelType;
@@ -54,15 +63,6 @@ public abstract class BaseDtoAssembler<TModel, TDto> implements DtoAssembler<TMo
     @Override
     public final Type getDtoType() {
         return dtoType;
-    }
-
-    public DtoAssemblerProvider getDtoAssemblerProvider() {
-        return dtoAssemblerProvider;
-    }
-
-    @Override
-    public void setDtoAssemblerProvider(DtoAssemblerProvider dtoAssemblerProvider) {
-        this.dtoAssemblerProvider = dtoAssemblerProvider;
     }
 
     @Override

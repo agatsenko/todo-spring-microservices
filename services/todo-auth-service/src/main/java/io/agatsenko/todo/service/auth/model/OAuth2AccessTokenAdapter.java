@@ -39,7 +39,7 @@ public class OAuth2AccessTokenAdapter implements OAuth2AccessToken {
 
     @Override
     public OAuth2RefreshToken getRefreshToken() {
-        return refreshToken.isExpired() ? null : refreshToken;
+        return refreshToken;
     }
 
     @Override

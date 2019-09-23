@@ -7,6 +7,7 @@ createCollection(
     validator: {
       $jsonSchema: {
         bsonType: 'object',
+        required: ['version', 'username', 'password', 'email', 'enabled', 'roles'],
         properties: {
           version: {
             bsonType: 'long'
@@ -24,10 +25,12 @@ createCollection(
             bsonType: 'bool'
           },
           roles: {
-            bsonType: 'array'
+            bsonType: 'array',
+            oneOf: {
+              bsonType: 'string'
+            }
           }
-        },
-        required: ['version', 'username', 'password', 'email', 'enabled', 'roles']
+        }
       }
     },
     validationLevel: 'strict',
@@ -63,6 +66,7 @@ createCollection(
     validator: {
       $jsonSchema: {
         bsonType: 'object',
+        required: ['authentication', 'clientId', 'scope'],
         properties: {
           authentication: {
             bsonType: 'binData'
@@ -95,14 +99,12 @@ createCollection(
             bsonType: 'date'
           },
           scope: {
-            bsonType: 'array'
+            bsonType: 'array',
+            oneOf: {
+              bsonType: 'string'
+            }
           }
-        },
-        required: [
-          'authentication',
-          'clientId',
-          'scope',
-        ]
+        }
       }
     },
     validationLevel: 'strict',

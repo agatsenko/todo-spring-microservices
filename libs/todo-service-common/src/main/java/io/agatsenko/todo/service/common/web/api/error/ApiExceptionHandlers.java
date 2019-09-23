@@ -19,6 +19,13 @@ import org.springframework.web.context.request.WebRequest;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
 public class ApiExceptionHandlers {
+    @ExceptionHandler(WebApiException.class)
+    public ResponseEntity<ApiError> handleBadRequestException(WebApiException ex, WebRequest request) {
+        return ResponseEntity
+                .status(ex.getStatus())
+                .body(new ApiError(ex.getStatus().value(), ex.getStatus().getReasonPhrase(), ex.getMessage()));
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiValidationError> handleConstraintViolationException(
             ConstraintViolationException ex,
@@ -41,6 +48,8 @@ public class ApiExceptionHandlers {
                     }
                 })
                 .collect(Collectors.toList());
-        return ResponseEntity.badRequest().body(new ApiValidationError(ex.getMessage(), violations));
+        return ResponseEntity
+                .badRequest()
+                .body(new ApiValidationError(ApiValidationError.DEFAULT_ERROR_MSG, violations));
     }
 }

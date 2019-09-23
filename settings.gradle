@@ -5,23 +5,25 @@ includeLib("todo-test")
 includeLib("todo-util")
 includeLib("todo-service-common")
 
-include (":services")
-includeServiceModule("todo-auth-service")
-
 include(":infrastructure")
 includeInfrastructureModule("todo-config-server")
-includeInfrastructureModule("todo-service-discovery-server")
-includeInfrastructureModule("todo-gateway-server")
+includeInfrastructureModule("todo-eureka-server")
+includeInfrastructureModule("todo-zuul-server")
+
+include (":services")
+includeServiceModule("todo-auth-service-client")
+includeServiceModule("todo-auth-service")
+includeServiceModule("todo-list-service")
 
 
 def includeLib(String name) {
   include(":libs:$name")
 }
 
-def includeServiceModule(String name) {
-  include(":services:$name")
-}
-
 def includeInfrastructureModule(String name) {
   include(":infrastructure:$name")
+}
+
+def includeServiceModule(String name) {
+  include(":services:$name")
 }
