@@ -210,7 +210,7 @@ curl -i -H "Authorization: Bearer $TOKEN" -X GET http://localhost:8000/list/api/
 Запрос:
 
 ```
-curl -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -H "Accept: application/json" -d '{"name": "list 5","tasks":[{"description": "task 5.1","completed": false,"order": 1}]}' -X POST http://localhost:8000/list/api/task-list
+curl -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -H "Accept: application/json" -d '{"name":"list 5","tasks":[{"description":"task 5.1","completed":false,"order":1}]}' -X POST http://localhost:8000/list/api/task-list
 ```
 
 Ответ:
