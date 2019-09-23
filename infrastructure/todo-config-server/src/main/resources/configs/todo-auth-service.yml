@@ -73,6 +73,16 @@ security:
     - /swagger-resources/**
     - /swagger-ui.html
 
+ribbon:
+  ReadTimeout: 2000
+  ConnectTimeout: 2000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 swagger:
   security:
     defaultClientId: swagger
@@ -81,8 +91,3 @@ swagger:
 
 springfox.documentation.swagger.v2.path: /swagger/v2/api-docs
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"

@@ -2,7 +2,7 @@
  * Author: Alexander Gatsenko (alexandr.gatsenko@gmail.com)
  * Created: 2019-08-25
  */
-package io.agatsenko.todo.infrastructure.servicedescovery;
+package io.agatsenko.todo.infrastructure.eureka;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

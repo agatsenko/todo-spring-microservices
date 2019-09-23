@@ -2,7 +2,7 @@
  * Author: Alexander Gatsenko (alexandr.gatsenko@gmail.com)
  * Created: 2019-09-03
  */
-package io.agatsenko.todo.infrastructure.gateway;
+package io.agatsenko.todo.infrastructure.zuul;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -15,8 +15,8 @@ eureka:
 
 zuul:
   host:
-    connect-timeout-millis: 3000
-    socket-timeout-millis: 3000
+    connect-timeout-millis: 2000
+    socket-timeout-millis: 2000
   ignoredServices: "*"
 #  ignoredPatterns:
 #    - /**/actuator/**
@@ -35,20 +35,20 @@ zuul:
       path: /list/**
       stripPrefix: false
 
+ribbon:
+  ReadTimeout: 2000
+  ConnectTimeout: 2000
+
 hystrix:
   command:
     default:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 3000
-
-ribbon:
-  ReadTimeout: 3000
-  ConnectTimeout: 3000
+            timeoutInMilliseconds: 20000
 
 management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: "*"
