@@ -122,6 +122,6 @@ public class OAuth2Token {
     }
 
     public boolean isEmpty() {
-        return !isAccessTokenDefined() && !isRefreshTokenExpired();
+        return !isAccessTokenDefined() && !isRefreshTokenDefined();
     }
 }

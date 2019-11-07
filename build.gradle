@@ -36,6 +36,7 @@ buildscript {
 
     dockerImageJava = "adoptopenjdk:11-jre-hotspot"
     dockerLabelMaintainer = "Alexander Gatsenko (alexandr.gatsenko@gmail.com)"
+    devDockerComposeFile = "docker-compose.dev.yml"
   }
 
   // override spring bom dependency versions
@@ -60,20 +61,20 @@ buildscript {
 apply plugin: "docker-compose"
 
 dockerCompose {
-  useComposeFiles = ["docker-compose.dev.yml"]
+  useComposeFiles = [devDockerComposeFile]
 
   mongo {
-    useComposeFiles = ["docker-compose.dev.yml"]
+    useComposeFiles = [devDockerComposeFile]
     startedServices = ["todo-mongo", "todo-mongo-express"]
   }
 
   onlymongo {
-    useComposeFiles = ["docker-compose.dev.yml"]
+    useComposeFiles = [devDockerComposeFile]
     startedServices = ["todo-mongo"]
   }
 
   infra {
-    useComposeFiles = ["docker-compose.dev.yml"]
+    useComposeFiles = [devDockerComposeFile]
     startedServices = [
         "todo-mongo",
         "todo-mongo-express",

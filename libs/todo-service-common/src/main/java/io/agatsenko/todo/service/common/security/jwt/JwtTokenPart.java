@@ -27,7 +27,23 @@ abstract class JwtTokenPart {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || o.getClass() != getClass()) {
+            return false;
+        }
+
+        final var part = (JwtTokenPart) o;
+        return getValues().equals(part.getValues());
+    }
+
+    @Override
+    public int hashCode() {
+        return getValues().hashCode();
+    }
+
+    @Override
     public String toString() {
         return getClass().getSimpleName() + '(' + values.toString() + ')';
     }
+
 }

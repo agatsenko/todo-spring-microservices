@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import io.agatsenko.todo.service.auth.model.UserRepo;
 import io.agatsenko.todo.service.common.log.LogError;
 import io.agatsenko.todo.service.common.log.LogInfo;
 
@@ -32,8 +31,6 @@ public class PrincipalController {
 
     @NonNull
     private final ObjectMapper objMapper;
-    @NonNull
-    private final UserRepo userRepo;
 
     @LogInfo
     @LogError

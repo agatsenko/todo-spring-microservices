@@ -61,6 +61,8 @@ subprojects {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 project(":services:todo-auth-service-client") {
   dependencyManagement {
     imports {
@@ -74,17 +76,20 @@ project(":services:todo-auth-service-client") {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 project(":services:todo-auth-service") {
   apply plugin: "org.springframework.boot"
   apply plugin: "com.bmuschko.docker-spring-boot-application"
+  apply plugin: "docker-compose"
 
   version = "${ver.projectMajor}.1.0"
 
   sourceSets {
-    // functional tests
-    ftest {
+    // integration (functional) tests
+    itest {
       java {
-        srcDir file("src/ftest/java")
+        srcDir file("src/itest/java")
         compileClasspath += sourceSets.main.output
         runtimeClasspath += sourceSets.main.output
         exclude excludeKeepDirPattern
@@ -96,22 +101,21 @@ project(":services:todo-auth-service") {
   }
 
   configurations {
-    ftestImplementation.extendsFrom implementation
-    ftestRuntimeOnly.extendsFrom runtimeOnly
+    itestImplementation.extendsFrom implementation
+    itestRuntimeOnly.extendsFrom runtimeOnly
   }
 
-  task ftest(type: Test) {
-    description = "Run the functional tests."
+  task itest(type: Test) {
+    description = "Run the integration (functional) tests."
     group = "verification"
 
-    testClassesDirs = sourceSets.ftest.output.classesDirs
-    classpath = sourceSets.ftest.runtimeClasspath
+    testClassesDirs = sourceSets.itest.output.classesDirs
+    classpath = sourceSets.itest.runtimeClasspath
 
     mustRunAfter test
   }
-  check.dependsOn ftest
 
-  ftest {
+  itest {
     useJUnitPlatform()
 
     testLogging {
@@ -146,24 +150,24 @@ project(":services:todo-auth-service") {
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 
-    ftestAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
-    ftestCompileOnly "org.projectlombok:lombok:${ver.lombok}"
+    itestAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    itestCompileOnly "org.projectlombok:lombok:${ver.lombok}"
 
-    ftestCompileOnly "junit:junit:${ver.junit4}"
+    itestCompileOnly "junit:junit:${ver.junit4}"
 
-    ftestImplementation project(":libs:todo-test")
-    ftestImplementation "org.slf4j:slf4j-api"
-    ftestImplementation "ch.qos.logback:logback-classic"
-    ftestImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
-    ftestImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
-    ftestImplementation "org.assertj:assertj-core:${ver.assertj}"
-    ftestImplementation "org.springframework.boot:spring-boot-starter-test"
+    itestImplementation project(":libs:todo-test")
+    itestImplementation "org.slf4j:slf4j-api"
+    itestImplementation "ch.qos.logback:logback-classic"
+    itestImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
+    itestImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
+    itestImplementation "org.assertj:assertj-core:${ver.assertj}"
+    itestImplementation "org.springframework.boot:spring-boot-starter-test"
     // it's required for rest assured on java 9+
-    ftestImplementation "org.glassfish.jaxb:jaxb-runtime"
-    ftestImplementation "io.rest-assured:rest-assured:${ver.restAssured}"
+    itestImplementation "org.glassfish.jaxb:jaxb-runtime"
+    itestImplementation "io.rest-assured:rest-assured:${ver.restAssured}"
 
-    ftestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
-    ftestRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
+    itestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
+    itestRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
   }
 
   springBoot {
@@ -177,7 +181,21 @@ project(":services:todo-auth-service") {
       tag = "${project.rootProject.name}/${project.name}:${project.version}"
     }
   }
+
+  dockerCompose {
+    authServiceITestInfra {
+      useComposeFiles = ["${project.project(":").rootDir.toPath().resolve(devDockerComposeFile)}"]
+      startedServices = [
+          "todo-mongo",
+          "todo-config-server",
+          "todo-eureka-server",
+      ]
+      isRequiredBy(itest)
+    }
+  }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 project(":services:todo-list-service") {
   apply plugin: "org.springframework.boot"
@@ -186,10 +204,10 @@ project(":services:todo-list-service") {
   version = "${ver.projectMajor}.1.0"
 
   sourceSets {
-    // functional tests
-    ftest {
+    // integration (functional) tests
+    itest {
       java {
-        srcDir file("src/ftest/java")
+        srcDir file("src/itest/java")
         compileClasspath += sourceSets.main.output
         runtimeClasspath += sourceSets.main.output
         exclude excludeKeepDirPattern
@@ -201,22 +219,21 @@ project(":services:todo-list-service") {
   }
 
   configurations {
-    ftestImplementation.extendsFrom implementation
-    ftestRuntimeOnly.extendsFrom runtimeOnly
+    itestImplementation.extendsFrom implementation
+    itestRuntimeOnly.extendsFrom runtimeOnly
   }
 
-  task ftest(type: Test) {
-    description = "Run the functional tests."
+  task itest(type: Test) {
+    description = "Run the integration (functional) tests."
     group = "verification"
 
-    testClassesDirs = sourceSets.ftest.output.classesDirs
-    classpath = sourceSets.ftest.runtimeClasspath
+    testClassesDirs = sourceSets.itest.output.classesDirs
+    classpath = sourceSets.itest.runtimeClasspath
 
     mustRunAfter test
   }
-  check.dependsOn ftest
 
-  ftest {
+  itest {
     useJUnitPlatform()
 
     testLogging {
@@ -250,24 +267,24 @@ project(":services:todo-list-service") {
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 
-    ftestAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
-    ftestCompileOnly "org.projectlombok:lombok:${ver.lombok}"
+    itestAnnotationProcessor "org.projectlombok:lombok:${ver.lombok}"
+    itestCompileOnly "org.projectlombok:lombok:${ver.lombok}"
 
-    ftestCompileOnly "junit:junit:${ver.junit4}"
+    itestCompileOnly "junit:junit:${ver.junit4}"
 
-    ftestImplementation project(":libs:todo-test")
-    ftestImplementation "org.slf4j:slf4j-api"
-    ftestImplementation "ch.qos.logback:logback-classic"
-    ftestImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
-    ftestImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
-    ftestImplementation "org.assertj:assertj-core:${ver.assertj}"
-    ftestImplementation "org.springframework.boot:spring-boot-starter-test"
+    itestImplementation project(":libs:todo-test")
+    itestImplementation "org.slf4j:slf4j-api"
+    itestImplementation "ch.qos.logback:logback-classic"
+    itestImplementation "org.junit.jupiter:junit-jupiter-api:${ver.junit5}"
+    itestImplementation "org.junit.jupiter:junit-jupiter-params:${ver.junit5}"
+    itestImplementation "org.assertj:assertj-core:${ver.assertj}"
+    itestImplementation "org.springframework.boot:spring-boot-starter-test"
     // it's required for rest assured on java 9+
-    ftestImplementation "org.glassfish.jaxb:jaxb-runtime"
-    ftestImplementation "io.rest-assured:rest-assured:${ver.restAssured}"
+    itestImplementation "org.glassfish.jaxb:jaxb-runtime"
+    itestImplementation "io.rest-assured:rest-assured:${ver.restAssured}"
 
-    ftestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
-    ftestRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
+    itestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${ver.junit5}"
+    itestRuntimeOnly "org.junit.vintage:junit-vintage-engine:${ver.junit5}"
   }
 
   springBoot {

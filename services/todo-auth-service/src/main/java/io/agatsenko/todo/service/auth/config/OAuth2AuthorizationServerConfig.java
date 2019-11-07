@@ -36,7 +36,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
         security
                 .passwordEncoder(passwordEncoder)
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()")
+                .checkTokenAccess("permitAll()")
         ;
     }
 
